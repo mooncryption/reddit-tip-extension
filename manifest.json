@@ -51,6 +51,11 @@
         "https://*.reddit.com/message/*"
         ],
         "run_at": "document_start"
+      }, {
+          "css": ["styles.css"],
+          "js": ["jquery.min.js", "composer.js"],
+          "matches": ["https://*.reddit.com/message/compose/*", "https://reddit.com/message/compose/*", "https://reddit.com/message/compose", "http://reddit.com/message/compose",
+        "https://reddit.com/message/inbox/*", "https://*.reddit.com/message/inbox/*", "http://*.reddit.com/message/inbox/*", "http://reddit.com/message/inbox/*", "https://*.reddit.com/message/inbox", "https://reddit.com/message/inbox"]
       }]
    
   }

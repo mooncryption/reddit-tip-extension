@@ -18,6 +18,10 @@
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
 }
+.rte-message-class {
+    width: 50% !important;
+    height: 20px !important;
+}
 .rt-bulletlist {
     list-style-type: disc !important;
     list-style-position: inside;

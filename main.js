@@ -6,6 +6,7 @@ var rt_ran_already = false;
 var rt_autosend = true;
 var tipInProgress = false;
 var tipData = {};
+var coreRuntime = 0; var checkRuntime = 0;
 
 chrome.storage.sync.get({
     autotip: "true",
@@ -35,6 +36,20 @@ chrome.storage.sync.get({
 function rtError(message) {
     console.log("[REDDIT TIP EXTENSION] Error: ", message);
     alert(`Reddit Tip Extension had an error: \n\n ${message}`);
+}
+
+function morebutton(which) {
+    chrome.storage.sync.set({
+        rcompose: {
+            go: true,
+            id: which
+        }
+    }, function() {
+        window.location.href = "https://www.reddit.com/message/compose/?rcompose=true";
+        setTimeout(function(){
+            window.location.replace("https://www.reddit.com/message/compose/?rcompose=true");
+        }, 100);
+    })
 }
 
 function rtLog(message) {
@@ -117,7 +132,9 @@ function checkForTips() {
     -------------
     Used to check for an incoming tip in the URL
     */
+    if (checkRuntime >= 15) return 0;
     console.log("Checking for tip requests...")
+    checkRuntime += 1;
     var p = tipData;
     chrome.storage.sync.get({
         tipData: {
@@ -220,17 +237,19 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             
         });
         if (rt_autosend) {
-            setTimeout(function () { document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click(); }, 50);
+            document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
         }
     }
 }
 
 function redditTipCore() {
+    if (coreRuntime >= 15) return 0;
     var buttonsList = $("ul.flat-list.buttons");
     if (buttonsList.length < 1) {
         window.setTimeout(rActivate, 200);
     }
     console.log(rt_log + "activating...");
+    coreRuntime += 1;
 
 
     var modal = document.createElement("div");
@@ -248,7 +267,7 @@ function redditTipCore() {
     }
 
     var rt_modal_main = document.createElement("div");
-    rt_modal_main.innerHTML = '<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" id="rte-message" class="rte-message-class"/><br/><br/>';
+    rt_modal_main.innerHTML = '<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" value=" " id="rte-message" class="rte-message-class"/><br/><br/>';
     var rt_btn = document.createElement("span");
     rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn">Send Tip!</button><br/><br/>';
     rt_modal_main.appendChild(rt_btn);
@@ -270,13 +289,15 @@ function redditTipCore() {
         }
     }
 
+    var rt_modal_more = document.createElement("div");
+    rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button><br/>`;
+    modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_more);
+
     var rt_modal_notes = document.createElement("div"); 
-    var bugMsg = `\n\n\n\n-----\nVersion: ${version}\nBrowser Agent: ${navigator.userAgent}\n`.replace(/;/g, "");
-    console.log(bugMsg);
-    var letUsKnow = encodeURI(`https://www.reddit.com/message/compose/?to=mooncryption&subject=Reddit Tip Extension -&message=${bugMsg}`);
-    console.log(letUsKnow);
-    rt_modal_notes.innerHTML = `<hr/><h3 class="rt-notes-header">Notes</h3>  <ul class="rt-bulletlist"><li>You\'ll need to have a deposit of BCH before you can tip. See <a href="https://www.reddit.com/r/tippr/wiki/reddit-usage">here</a> for how to do this.</li><li>Don\'t know what Bitcoin Cash (BCH) is? Ask about it <a href="https://reddit.com/r/btc">here.</a><li>Need help? Is there a bug? <b><a target="_blank" href="${letUsKnow}">Let Us Know</a></b></ul> `;
+    var letUsKnow = "https://www.reddit.com/message/compose/?rcompose=true";
+    rt_modal_notes.innerHTML = `<hr/><h3 class="rt-notes-header">Notes</h3>  <ul class="rt-bulletlist"><li>You\'ll need to have a deposit of BCH before you can tip. Click the button labeled "Deposit" above to do this.</li><li>Don\'t know what Bitcoin Cash (BCH) is? Ask about it <a href="https://reddit.com/r/btc">here.</a><li>Need help? Is there a bug? <b><a target="_blank" href="${letUsKnow}">Let Us Know</a></b></ul> `;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_notes);
+
 
     if (window.location.href.indexOf("/comments/") <= -1) {
         rt_truelink = false;
@@ -293,7 +314,22 @@ function redditTipCore() {
     }
     console.log(rt_log + "attaching...")
 
+
     for (i = 0; i < document.getElementsByClassName("rt-modal-class").length; ++i) {
+        try {
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-deposit")[0].onclick = function() {
+                morebutton("deposit");
+            }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-balance")[0].onclick = function() {
+                morebutton("balance");
+            }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-withdraw")[0].onclick = function() {
+                morebutton("withdraw");
+            }
+        } catch (err) {
+            console.log("Caught error", err);
+        }
+
         document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeypress = function () {
             $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
                 if (status == 'success') {
@@ -420,22 +456,20 @@ function rActivate(force = false) {
         console.log(rt_log + "waiting for full script load...")
         window.setTimeout(rActivate, 200);
     } else {
-        if (true) {
-            if (!rt_ran_already || force) {
-                console.log(rt_log + "beginning launch...")
-                try {
-                    checkForTips();
-                    redditTipCore();
-                    $(window).bind('hashchange', function () { checkForTips(); rActivate(true); }); 
-                } catch (err) {
-                    console.log(rt_log, " caught error: ", err);
+        if (document.readyState === "complete" || force) {
+            console.log(rt_log + "beginning launch...")
+            try {
+                checkForTips();
+                redditTipCore();
+                $(window).bind('hashchange', function () { checkForTips(); rActivate(true); }); 
+            } catch (err) {
+                console.log(rt_log, " caught error: ", err);
+                setTimeout(function(){
                     rActivate(true);
-                }
-            } else {
-                console.log(rt_log + "waiting for signal...")
+                }, 250);
             }
         } else {
-            console.log(rt_log + "waiting for full reddit load...")
+            // console.log(rt_log + "waiting for full reddit load...")
             window.setTimeout(rActivate, 200);
         }
     }
@@ -443,3 +477,7 @@ function rActivate(force = false) {
 
 console.log(rt_log + "waiting for full page load...");
 rActivate(false);
+
+setTimeout(function() {
+    rActivate(true);
+}, 1000);
