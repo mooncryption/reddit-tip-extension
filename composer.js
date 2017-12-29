@@ -20,7 +20,7 @@ if (window.location.href.indexOf("rwaitalert") != -1) {
 function c(data) {
     var to = "mooncryption";
     var subject = "Reddit Tip Extension - Feedback";
-    var message = `\n\n\n-----\nUser Agent: ${navigator.userAgent}`;
+    var message = `\n\n\n-----\nBrowser I'm Using:\nOperating System I'm Using:\n\n-----\n~~~~(extension logs, don't remove):~~~~\nUser Agent: ${navigator.userAgent}\nBrowser Data: ${navigator.appName} -> ${navigator.appCodeName} -> ${navigator.appVersion}`;
     var send = false;
     switch (data.id) {
         case 'deposit':

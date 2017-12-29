@@ -290,7 +290,7 @@ function redditTipCore() {
     }
 
     var rt_modal_more = document.createElement("div");
-    rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button><br/>`;
+    rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button> &nbsp; &middot; &nbsp; <button id="btn-report" class="btn-report">Report Bug</button> <br/>`;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_more);
 
     var rt_modal_notes = document.createElement("div");
@@ -325,6 +325,9 @@ function redditTipCore() {
             }
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-withdraw")[0].onclick = function () {
                 morebutton("withdraw");
+            }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-report")[0].onclick = function () {
+                morebutton("feedback");
             }
         } catch (err) {
             console.log("Caught error", err);
