@@ -38,7 +38,7 @@ function c(data) {
         case 'withdraw':
             subject = "Withdrawal"
             to = "tippr";
-            message = "withrdraw <AMOUNT> <ADDRESS>";
+            message = "withdraw <AMOUNT> <ADDRESS>";
             send = false;
         default:
         case 'feedback':
