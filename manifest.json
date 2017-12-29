@@ -2,6 +2,7 @@
     "manifest_version": 2,
    
     "name": "Reddit Tip Extension",
+    "short_name": "Reddit Tippr",
     "version": "0.0.1",
     "icons": {
 		"48": "./images/logo-48.png",
