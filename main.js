@@ -22,8 +22,8 @@ chrome.storage.sync.get({
     tipData = items.tipData;
 });
 
-(function($) {
-    $.fn.goTo = function() {
+(function ($) {
+    $.fn.goTo = function () {
         if ($(this) && $(this).offset() && $(this).offset.top) {
             $('html, body').animate({
                 scrollTop: $(this).offset().top + 'px'
@@ -44,9 +44,9 @@ function morebutton(which) {
             go: true,
             id: which
         }
-    }, function() {
+    }, function () {
         window.location.href = "https://www.reddit.com/message/compose/?rcompose=true";
-        setTimeout(function(){
+        setTimeout(function () {
             window.location.replace("https://www.reddit.com/message/compose/?rcompose=true");
         }, 100);
     })
@@ -140,7 +140,7 @@ function checkForTips() {
         tipData: {
             rtip: false,
         }
-    }, function(items) {
+    }, function (items) {
         p = items.tipData;
     })
     if (!(p.rtip && p.rtip == true && p.rcomment == false && tipInProgress == true && getURLParams(decodeURIComponent(window.location.href)).rtip && getURLParams(decodeURIComponent(window.location.href)).rtip == true)) {
@@ -163,7 +163,7 @@ function checkForTips() {
             tipData: {
                 rtip: false,
             }
-        }, function(){});
+        }, function () { });
         if (rt_autosend) {
             setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
         }
@@ -191,11 +191,11 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 rcomment: isComment,
                 rmessage: message
             }
-        }, function() {
+        }, function () {
             // Update status to let user know options were saved.
             window.location.href = `${postLink}?${encodeURIComponent(`rtip=true`)}`;
             setTimeout(location.reload, 100);
-            setTimeout(function(){window.location.href = `${postLink}?${encodeURIComponent(`rtip=true`)}`;}, 101);
+            setTimeout(function () { window.location.href = `${postLink}?${encodeURIComponent(`rtip=true`)}`; }, 101);
         });
         return 0;
     } else {
@@ -209,9 +209,9 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 rcomment: isComment,
                 rmessage: message
             }
-        }, function() {
+        }, function () {
             // Update status to let user know options were saved.
-            
+
         });
     }
     var rafter = "";
@@ -232,9 +232,9 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             tipData: {
                 rtip: false
             }
-        }, function() {
+        }, function () {
             // Update status to let user know options were saved.
-            
+
         });
         if (rt_autosend) {
             document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
@@ -293,7 +293,7 @@ function redditTipCore() {
     rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button><br/>`;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_more);
 
-    var rt_modal_notes = document.createElement("div"); 
+    var rt_modal_notes = document.createElement("div");
     var letUsKnow = "https://www.reddit.com/message/compose/?rcompose=true";
     rt_modal_notes.innerHTML = `<hr/><h3 class="rt-notes-header">Notes</h3>  <ul class="rt-bulletlist"><li>You\'ll need to have a deposit of BCH before you can tip. Click the button labeled "Deposit" above to do this.</li><li>Don\'t know what Bitcoin Cash (BCH) is? Ask about it <a href="https://reddit.com/r/btc">here.</a><li>Need help? Is there a bug? <b><a target="_blank" href="${letUsKnow}">Let Us Know</a></b></ul> `;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_notes);
@@ -317,13 +317,13 @@ function redditTipCore() {
 
     for (i = 0; i < document.getElementsByClassName("rt-modal-class").length; ++i) {
         try {
-            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-deposit")[0].onclick = function() {
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-deposit")[0].onclick = function () {
                 morebutton("deposit");
             }
-            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-balance")[0].onclick = function() {
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-balance")[0].onclick = function () {
                 morebutton("balance");
             }
-            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-withdraw")[0].onclick = function() {
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-withdraw")[0].onclick = function () {
                 morebutton("withdraw");
             }
         } catch (err) {
@@ -461,10 +461,10 @@ function rActivate(force = false) {
             try {
                 checkForTips();
                 redditTipCore();
-                $(window).bind('hashchange', function () { checkForTips(); rActivate(true); }); 
+                $(window).bind('hashchange', function () { checkForTips(); rActivate(true); });
             } catch (err) {
                 console.log(rt_log, " caught error: ", err);
-                setTimeout(function(){
+                setTimeout(function () {
                     rActivate(true);
                 }, 250);
             }
@@ -478,6 +478,6 @@ function rActivate(force = false) {
 console.log(rt_log + "waiting for full page load...");
 rActivate(false);
 
-setTimeout(function() {
+setTimeout(function () {
     rActivate(true);
 }, 1000);

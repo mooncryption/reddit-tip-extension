@@ -1,11 +1,10 @@
 {
     "manifest_version": 2,
-   
     "name": "Reddit Tip Extension",
     "short_name": "Reddit Tippr",
     "version": "0.0.1",
     "icons": {
-		"48": "./images/logo-48.png",
+        "48": "./images/logo-48.png",
         "128": "./images/logo-128.png",
         "256": "./images/logo-256.png"
     },
@@ -13,49 +12,74 @@
     "homepage_url": "https://github.com/mooncryption/reddit-tip-extension",
     "description": "Works with /u/tippr on Reddit to tip posts/comments with BCH!",
     "minimum_chrome_version": "50",
-
     "permissions": [
         "https://*.reddit.com/*",
         "http://*.reddit.com/*",
         "webRequest",
         "storage"
     ],
-    "optional_permissions": [
-    ],
+    "optional_permissions": [],
     "options_ui": {
         "page": "options.html",
         "chrome_style": true
     },
-    "content_scripts": [{
-      "css": ["styles.css"],
-      "js": ["jquery.min.js", "main.js"],
-      "matches": ["https://reddit.com/*", "http://reddit.com/*", "https://*.reddit.com/*", "http://*.reddit.com/*"],
-      "exclude_matches": [
-        "https://mod.reddit.com/*",
-        "https://ads.reddit.com/*",
-        "https://i.reddit.com/*",
-        "https://m.reddit.com/*",
-        "https://static.reddit.com/*",
-        "https://thumbs.reddit.com/*",
-        "https://blog.reddit.com/*",
-        "https://code.reddit.com/*",
-        "https://about.reddit.com/*",
-        "https://*.reddit.com/*.compact",
-        "https://*.reddit.com/*.compact?*",
-        "https://*.reddit.com/*.mobile",
-        "https://*.reddit.com/*.mobile?*",
-        "https://*.reddit.com/*.json",
-        "https://*.reddit.com/*.json?*",
-        "https://*.reddit.com/*.json-html",
-        "https://*.reddit.com/*.json-html?*",
-        "https://*.reddit.com/message/*"
-        ],
-        "run_at": "document_start"
-      }, {
-          "css": ["styles.css"],
-          "js": ["jquery.min.js", "composer.js"],
-          "matches": ["https://*.reddit.com/message/compose/*", "https://reddit.com/message/compose/*", "https://reddit.com/message/compose", "http://reddit.com/message/compose",
-        "https://reddit.com/message/inbox/*", "https://*.reddit.com/message/inbox/*", "http://*.reddit.com/message/inbox/*", "http://reddit.com/message/inbox/*", "https://*.reddit.com/message/inbox", "https://reddit.com/message/inbox"]
-      }]
-   
-  }
+    "content_scripts": [
+        {
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "jquery.min.js",
+                "main.js"
+            ],
+            "matches": [
+                "https://reddit.com/*",
+                "http://reddit.com/*",
+                "https://*.reddit.com/*",
+                "http://*.reddit.com/*"
+            ],
+            "exclude_matches": [
+                "https://mod.reddit.com/*",
+                "https://ads.reddit.com/*",
+                "https://i.reddit.com/*",
+                "https://m.reddit.com/*",
+                "https://static.reddit.com/*",
+                "https://thumbs.reddit.com/*",
+                "https://blog.reddit.com/*",
+                "https://code.reddit.com/*",
+                "https://about.reddit.com/*",
+                "https://*.reddit.com/*.compact",
+                "https://*.reddit.com/*.compact?*",
+                "https://*.reddit.com/*.mobile",
+                "https://*.reddit.com/*.mobile?*",
+                "https://*.reddit.com/*.json",
+                "https://*.reddit.com/*.json?*",
+                "https://*.reddit.com/*.json-html",
+                "https://*.reddit.com/*.json-html?*",
+                "https://*.reddit.com/message/*"
+            ],
+            "run_at": "document_start"
+        },
+        {
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "jquery.min.js",
+                "composer.js"
+            ],
+            "matches": [
+                "https://*.reddit.com/message/compose/*",
+                "https://reddit.com/message/compose/*",
+                "https://reddit.com/message/compose",
+                "http://reddit.com/message/compose",
+                "https://reddit.com/message/inbox/*",
+                "https://*.reddit.com/message/inbox/*",
+                "http://*.reddit.com/message/inbox/*",
+                "http://reddit.com/message/inbox/*",
+                "https://*.reddit.com/message/inbox",
+                "https://reddit.com/message/inbox"
+            ]
+        }
+    ]
+}

@@ -8,12 +8,12 @@ if (window.location.href.indexOf("rwaitalert") != -1) {
     } else {
         try {
             if ($(".live-timestamp")[0].innerHTML != "just now") {
-                setTimeout(function() {
+                setTimeout(function () {
                     window.location.replace("https://www.reddit.com/message/inbox/?rwaitalert=false")
-                }, 1000*10)
+                }, 1000 * 10)
             }
         } catch (e) {
-            
+
         }
     }
 }
@@ -42,7 +42,7 @@ function c(data) {
             send = false;
         default:
         case 'feedback':
-            console.log(1);
+            console.log("feedback mode");
     }
     console.log("RCompose", to, message, subject, send);
 
@@ -54,9 +54,9 @@ function c(data) {
     }
     if (send == true) {
         document.getElementsByName("send")[0].click();
-        setTimeout(function(){
+        setTimeout(function () {
             window.location.replace("https://www.reddit.com/message/inbox/?rwaitalert=true");
-            setTimeout(function(){
+            setTimeout(function () {
                 window.location.replace("https://www.reddit.com/message/inbox/?rwaitalert=true");
             }, 500);
         }, 500);
@@ -75,7 +75,7 @@ if (window.location.href.indexOf("rcompose=true") != -1) {
             go: true,
             id: "feedback"
         }
-    }, function(items) {
+    }, function (items) {
         c(items.rcompose);
     });
 } 
