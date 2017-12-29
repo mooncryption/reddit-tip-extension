@@ -7,6 +7,7 @@ var rt_autosend = true;
 var tipInProgress = false;
 var tipData = {};
 var coreRuntime = 0; var checkRuntime = 0;
+var rt_step = 0.01; var rt_amt = 0.0001; var rt_unit = "bch";
 
 chrome.storage.sync.get({
     autotip: "true",
@@ -14,12 +15,18 @@ chrome.storage.sync.get({
     tipInProgress: false,
     tipData: {
         rtip: false,
-    }
+    },
+    defaultStep: 0.01,
+    defaultAmt: 0.0001,
+    defaultUnit: "bch"
 }, function (items) {
     rt_autosend = (items.autotip == "true" || items.autotip == true);
     rt_tip_word = items.word;
     tipInProgress = items.tipInProgress;
     tipData = items.tipData;
+    rt_step = items.defaultStep;
+    rt_amt = items.defaultAmt;
+    rt_unit = items.defaultUnit;
 });
 
 (function ($) {
@@ -219,14 +226,41 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         rafter = `\n\n${message}`
     }
     var c = `${amount} ${unit} u/tippr ${rafter}`;
+    console.log("comment", c);
     for (i = 0; i < document.getElementsByClassName("bylink").length; ++i) {
         if (!(document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") && document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") == postLink)) {
             continue;
         }
-        document.getElementsByClassName("bylink")[i].parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click();
-        console.log(document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
-        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
-        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
+        var bl = document.getElementsByClassName("bylink")[i];
+        console.log("bl:<", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        xt =  bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0];
+
+        bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click(); // CLICK REPLY BTN
+
+        // console.log("bl:>", i, document.getElementsByClassName("bylink")[i], document.getElementsByClassName("bylink")[i].parentElement, document.getElementsByClassName("bylink")[i].parentElement.parentElement);
+        console.log("bl:-", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        console.log("xt", xt);
+        // throw "";
+        // console.log("229:bylink", document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
+        var yt = false, tipReady = false;
+        try {
+            bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
+            bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
+            tipReady = true;
+        } catch (e1) {
+            try {
+                yt = xt.parentElement.parentElement.parentElement.parentElement.querySelector(".usertext.cloneable")
+                console.log("yt", yt);
+                if (!yt) {
+                    throw "YT Nonexistent";
+                }
+                yt.getElementsByClassName("md")[0].children[0].value = c;
+                yt.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
+                tipReady = true;
+            } catch (e2) {
+                console.log("243:errors", e1, "|||", e2);
+            }
+        }
         chrome.storage.sync.set({
             tipInProgress: false,
             tipData: {
@@ -236,8 +270,12 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             // Update status to let user know options were saved.
 
         });
-        if (rt_autosend) {
-            document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
+        if (rt_autosend && tipReady) {
+            if (yt !== false) {
+                yt.getElementsByClassName("save")[0].click();
+            } else {
+                bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
+            }
         }
     }
 }
@@ -267,7 +305,7 @@ function redditTipCore() {
     }
 
     var rt_modal_main = document.createElement("div");
-    rt_modal_main.innerHTML = '<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" value=" " id="rte-message" class="rte-message-class"/><br/><br/>';
+    rt_modal_main.innerHTML = `<input type="number" step="${rt_step}" value="${rt_amt}" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" value=" " id="rte-message" class="rte-message-class"/><br/><br/>`;
     var rt_btn = document.createElement("span");
     rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn">Send Tip!</button><br/><br/>';
     rt_modal_main.appendChild(rt_btn);
@@ -320,6 +358,7 @@ function redditTipCore() {
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-deposit")[0].onclick = function () {
                 morebutton("deposit");
             }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].value = rt_unit;
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-balance")[0].onclick = function () {
                 morebutton("balance");
             }
@@ -343,7 +382,7 @@ function redditTipCore() {
             console.log("Caught error", err);
         }
 
-        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeypress = function () {
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeydown = function () {
             $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
                 if (status == 'success') {
                     var price = data.USD || 3000.0;
@@ -393,6 +432,7 @@ function redditTipCore() {
                     }
                 }
             });
+        
         }
 
     }
