@@ -9,6 +9,7 @@
     - [Make A Deposit](#make-a-deposit)
     - [Check Your Balance](#check-your-balance)
     - [Make A Withdrawal](#make-a-withdrawal)
+- [What is Bitcoin Cash (BCH)?](#what-is-bitcoin-cash-bch)
 
 <!-- /TOC -->
 
@@ -53,7 +54,7 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Check Balance` button in the middle, as shown here:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/balance.gif"/></center>
 
-* `/u/tippr` will sends you a message with your balance soon!
+* `/u/tippr` will send you a message with your balance soon!
 
 ## Make A Withdrawal
 1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
@@ -62,3 +63,8 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/withdraw.gif"/></center>
 
 * If your details are correct, `/u/tippr` will initiate your withdrawal soon!
+
+# What is Bitcoin Cash (BCH)?
+Bitcoin Cash is a new version of Bitcoin that enables super-fast, low-fee transactions. Learn more at [the official website](http://bitcoincash.org).
+
+If you have questions, ask in [/r/btc](https://reddit.com/r/btc)!
