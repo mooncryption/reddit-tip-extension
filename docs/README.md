@@ -13,10 +13,12 @@
 # Usage 
 0. First, you'll need to get a deposit in! Scroll down to the [Deposit Section](#make-a-deposit) for how to do this. After that, get tipping! See below for instructions.<br/>
 
-1. Here's how to use the extension in <em>automatic submit mode</em> (the default mode):
+#### Automatic Submission Mode
+Here's how to use the extension in <em>automatic submit mode</em> (the default mode):
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1a.gif"/></center>
 
-2. If you want to use it so it only _fills_ the comment, and doesn't auto-submit it, go to <a href="about:extensions"><code>about:extensions</code></a>, then scroll to the Reddit Tip Extension. 
+#### Fill-Only Mode
+If you want to use it so it only _fills_ the comment, and doesn't auto-submit it, go to <a href="about:extensions"><code>about:extensions</code></a>, then scroll to the Reddit Tip Extension. 
 
 <br/>Click 'Options', then change the tipping mode to the second option.
 
