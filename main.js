@@ -2,6 +2,15 @@ var rt_tip_word = "give tip"; // "tip" "tippr"
 var rt_log = "Reddit Tip Extension by /u/mooncryption: ";
 var rt_truelink = true;
 var rt_ran_already = false;
+var rt_autosend = true;
+
+chrome.storage.sync.get({
+    autotip: "true",
+    word: "give tip",
+}, function(items) {
+    rt_autosend = (items.autotip == "true" || items.autotip == true);
+    rt_tip_word = items.word;
+});
 
 function rtError(message) {
     console.log("[REDDIT TIP EXTENSION] Error: ", message);
@@ -44,8 +53,8 @@ function getURLParams(url) {
         var paramValue = typeof(a[1])==='undefined' ? true : a[1];
   
         // (optional) keep case consistent
-        paramName = paramName.toLowerCase();
-        paramValue = paramValue.toLowerCase();
+        if (paramName.toLowerCase) paramName = paramName.toLowerCase();
+        if (paramValue.toLowerCase) paramValue = paramValue.toLowerCase();
   
         // if parameter name already exists
         if (obj[paramName]) {
@@ -83,15 +92,30 @@ function getURLParams(url) {
   }
 
 function checkForTips() {
-    var p = getURLParams(window.location.href);
+    console.log("Checking for tip requests...")
+    var p = getURLParams(decodeURIComponent(window.location.href));
     if (!(p.rtip && p.rtip == true && p.rcomment == false)) {
         return 0;
     }
-    var c = `${p.ramount} ${p.runit} u/tippr`;
-
+    var rafter = "";
+    if (p.rmessage && p.rmessage !== "") {
+        rafter = `\n\n${p.rmessage}`
+    }
+    var c = `${p.ramount} ${p.runit} u/tippr ${rafter}`;
+    console.log("Found Tip Request!", p, c);
+    if ($(".usertext.cloneable").length) {
+        $(".usertext.cloneable")[0].getElementsByClassName("md")[0].children[0].value = c;
+        $(".usertext.cloneable")[0].getElementsByClassName("save")[0].innerHTML = "send a tip!";
+        if (rt_autosend) {
+            setTimeout(function(){ $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click();}, 50);
+        }
+        window.location.href = `#${$(".usertext.cloneable")[0].id}`;
+    } else {
+        setTimeout(this, 100);
+    }
 }
 
-function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = false) {
+function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = false, message="") {
     document.getElementById("rt-modal").style.display = "none";
     for (j = 0; j < document.getElementsByClassName("rt-modal-class").length; ++j) {
         document.getElementsByClassName("rt-modal-class")[j].style.display = "none";
@@ -102,11 +126,22 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         window.location.href = `${postLink}?${encodeURIComponent(`rtip=true&ramount=${amount}&runit=${unit}&rauthor=${postAuthor}&rcomment=${isComment}`)}`;
         return 0;
     }
+    var rafter = "";
+    if (message && message !== "") {
+        rafter = `\n\n${message}`
+    }
+    var c = `${amount} ${unit} u/tippr ${rafter}`;
     for (i = 0; i < document.getElementsByClassName("bylink").length; ++i) {
         if (!(document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") && document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") == postLink)) {
             continue;
         }
-        
+        document.getElementsByClassName("bylink")[i].parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click();
+        console.log(document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
+        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
+        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "send a tip!";
+        if (rt_autosend) {
+            setTimeout(function(){document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();}, 50);
+        }
     }
 }
 
@@ -133,16 +168,17 @@ function redditTipCore() {
     }
 
     var rt_modal_main = document.createElement("div");
-    rt_modal_main.innerHTML='<input type="number" step="0.01" value="0.0001" id="rte-amount" name="rte-amount"/> <select name="rte-unit" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select><br/><br/>';
+    rt_modal_main.innerHTML='<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/>';
     var rt_btn = document.createElement("span");
     rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn">Send Tip!</button><br/><br/>';
     rt_modal_main.appendChild(rt_btn);
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_main);
     rt_btn.children[0].onclick = function () {
+        console.log(this)
         if (modal.getAttribute("rt-post-link") != "" && modal.getAttribute("rt-post-author") != "") {
             launchTip(
-                document.getElementById("rte-amount").value,
-                document.getElementById("rte-unit").value,
+                this.parentElement.parentElement.getElementsByClassName("rte-amount-class")[0].value,
+                this.parentElement.parentElement.getElementsByClassName("rte-unit-class")[0].value,
                 modal.getAttribute("rt-post-link"),
                 modal.getAttribute("rt-post-author"),
                 (modal.getAttribute("rt-is-comment") == "true")
@@ -161,8 +197,71 @@ function redditTipCore() {
         rt_truelink = false;
     }
     // console.log(modal.children, modal.children[0].getElementsByClassName("rt-main"));
-    $("body")[0].appendChild(modal);
+    if ($("body") && $("body").length) {
+        $("body")[0].appendChild(modal);
+    } else {
+        try {
+            document.getElementsByTagName("body")[0].appendChild(modal);
+        } catch (error)  {
+            //rtError(error);
+        } 
+    }
     console.log(rt_log + "attaching...")
+
+    for (i = 0; i < document.getElementsByClassName("rt-modal-class").length; ++i) {
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeypress = function(){
+            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function(data, status) {
+                if (status == 'success') {
+                    var price = data.USD || 3000.0;
+                    var x = document.getElementsByClassName("rt-usdv");
+                    for (i = 0; i < x.length; ++i) {
+                        var amt = x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value || 1;
+                        var unit = x[i].parentElement.getElementsByClassName("rte-unit-class")[0].value || 'bitcoin cash';
+                        var r = 0;
+                        var rs = "tip";
+                        if (unit == 'bch') {
+                            r = (price * amt).toFixed(2);
+                            rs = `$${r}`;
+                        } else if (unit == 'bits') {
+                            r = (price * amt * 0.000001).toFixed(2);
+                            rs = `$${r}`;
+                        } else if (unit == 'usd') {
+                            r = (amt * (1.00 / price)).toFixed(8);
+                            if (amt == 0 || amt < 0.00000001) r = 0;
+                            rs = `${r} bch`;
+                        }
+                        x[i].innerHTML = rs;
+                    }
+                }
+            });
+        }
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onchange = function(){
+            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function(data, status) {
+                if (status == 'success') {
+                    var price = data.USD || 3000.0;
+                    var x = document.getElementsByClassName("rt-usdv");
+                    for (i = 0; i < x.length; ++i) {
+                        var amt = x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value || 1;
+                        var unit = x[i].parentElement.getElementsByClassName("rte-unit-class")[0].value || 'bch';
+                        var r = 0;
+                        var rs = "tip";
+                        if (unit == 'bch') {
+                            r = (price * amt).toFixed(2);
+                            rs = `$${r}`;
+                        } else if (unit == 'bits') {
+                            r = (price * amt * 0.000001).toFixed(2);
+                            rs = `$${r}`;
+                        } else if (unit == 'usd') {
+                            r = (amt * (1.00 / price)).toFixed(8);
+                            rs = `${r} bch`;
+                        }
+                        x[i].innerHTML = rs;
+                    }
+                }
+            });
+        }
+
+    }
 
     for (i = 0; i < document.getElementsByClassName("rt-modal-close").length; ++i) {
         var closer = document.getElementsByClassName("rt-modal-close")[i];
@@ -187,18 +286,30 @@ function redditTipCore() {
     for (i = 0; i < buttonsList.length; i++) {
         if (!buttonsList[i]) { continue; }
         var rt = document.createElement("li");
-        rt.classList = ["tip-button", "login-required"];
+        if (rt.classList.contains("rte-activated")) {
+            continue;
+        }
+        rt.classList = ["tip-button", "login-required", "rte-activated"];
         rt.innerHTML = `<a href="javascript:void(0)" class="tipbtn access-required" data-event-action="tip">${rt_tip_word}</a>`;
-        rt.setAttribute("data-author",buttonsList[i].parentElement.getElementsByClassName("author")[0].innerHTML);
+        if (buttonsList[i].parentElement.getElementsByClassName("author")[0]) {
+            rt.setAttribute("data-author",buttonsList[i].parentElement.getElementsByClassName("author")[0].innerHTML || "");
+        } else {
+            rt.setAttribute("data-author","");
+        }
         isComment = false;
         plink = "";
         if (buttonsList[i].parentElement.getElementsByClassName("title")[0]) {
             rt.setAttribute("data-isComment", "false")
-            plink = buttonsList[i].parentElement.getElementsByClassName("title")[0].getAttribute("data-href-url") ||  buttonsList[i].parentElement.getElementsByClassName("title")[0].children[0].getAttribute("data-href-url");
+            // plink = buttonsList[i].parentElement.getElementsByClassName("title")[0].getAttribute("data-href-url") ||  buttonsList[i].parentElement.getElementsByClassName("title")[0].children[0].getAttribute("data-href-url");
+            plink = buttonsList[i].getElementsByClassName("first")[0].children[0].getAttribute("data-href-url");
             isComment = false;
         } else {
             rt.setAttribute("data-isComment", "true")
-            plink = buttonsList[i].getElementsByClassName("bylink")[0].getAttribute("data-href-url");
+            if (buttonsList[i].getElementsByClassName("bylink")[0]) {
+                plink = buttonsList[i].getElementsByClassName("bylink")[0].getAttribute("data-href-url");
+            } else {
+
+            }
             isComment = true;
         }
         rt.setAttribute("data-link", plink);
@@ -220,15 +331,20 @@ function redditTipCore() {
 
 function rActivate(force = false) {
     if (!window.jQuery) {
+        console.log(rt_log + "waiting for full script load...")
         window.setTimeout(rActivate, 200);
     } else {
-        if ($("body").length > 0) {
+        if (true) {
             if (!rt_ran_already || force) {
+                console.log(rt_log + "beginning launch...")
                 checkForTips();
                 redditTipCore();
                 $(window).bind('hashchange', function () {checkForTips(); rActivate(true);});
+            } else {
+                console.log(rt_log + "waiting for signal...")
             }
         } else {
+            console.log(rt_log + "waiting for full reddit load...")
             window.setTimeout(rActivate, 200);
         }
     }

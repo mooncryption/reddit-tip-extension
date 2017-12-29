@@ -20,10 +20,14 @@
         "storage"
     ],
     "optional_permissions": [
-	],
+    ],
+    "options_ui": {
+        "page": "options.html",
+        "chrome_style": true
+    },
     "content_scripts": [{
       "css": ["styles.css"],
-      "js": ["jquery.min.js", "core.js"],
+      "js": ["jquery.min.js", "main.js"],
       "matches": ["https://reddit.com/*", "http://reddit.com/*", "https://*.reddit.com/*", "http://*.reddit.com/*"],
       "exclude_matches": [
         "https://mod.reddit.com/*",
