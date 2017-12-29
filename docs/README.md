@@ -7,8 +7,8 @@
 1. Click the button above to start downloading and installing the extension. Make sure you're on a supported browser, such as Google Chrome or Opera.
 2. That's it! Go to any Reddit subreddit in a new tab, and start clicking those `give tip` buttons!
 
-## Usage
-0. First, you'll need to get a deposit in! Message the word `deposit` to `/u/tippr` on Reddit to do this. After that, get tipping! See below for instructions.
+# Usage 
+0. First, you'll need to get a deposit in! Scroll down to the [Deposit Section](#make-a-deposit) for how to do this. After that, get tipping! See below for instructions.
 
 1. Here's how to use the extension in _automatic submit mode_ (the default mode):
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1a.gif"/></center>
@@ -18,3 +18,26 @@
 After that, use it like so:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1b.gif"/></center>
 
+## Make A Deposit
+1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+
+2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Deposit` button in the middle, as shown here:
+<center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/deposit.gif"/></center>
+
+3. When `/u/tippr` sends you a message with the deposit instructions, send any amount of BCH to the given address!
+
+## Check Your Balance
+1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+
+2. Click the `give tip` button on any post. Instead of giving a tip, click the `Check Balance` button in the middle, as shown here:
+<center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/balance.gif"/></center>
+
+3. `/u/tippr` will sends you a message with your balance soon!
+
+## Make A Withdrawal
+1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+
+2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Withdrawal` button in the middle, as shown here:
+<center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/withdraw.gif"/></center>
+
+3. If your details are correct, `/u/tippr` will initiate your withdrawal soon!
