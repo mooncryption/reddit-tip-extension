@@ -4,11 +4,11 @@
 - [Table of Contents](#table-of-contents)
 - [Installation](#installation)
 - [Usage](#usage)
-            - [Automatic Submission Mode](#automatic-submission-mode)
-            - [Fill-Only Mode](#fill-only-mode)
-    - [Make A Deposit](#make-a-deposit)
-    - [Check Your Balance](#check-your-balance)
-    - [Make A Withdrawal](#make-a-withdrawal)
+    - [Automatic Submission Mode](#automatic-submission-mode)
+    - [Fill-Only Mode](#fill-only-mode)
+        - [Make A Deposit](#make-a-deposit)
+        - [Check Your Balance](#check-your-balance)
+        - [Make A Withdrawal](#make-a-withdrawal)
 - [What is Bitcoin Cash (BCH)?](#what-is-bitcoin-cash-bch)
 
 <!-- /TOC -->
@@ -28,11 +28,11 @@
 # Usage 
 0. First, you'll need to get a deposit in! Scroll down to the [Deposit Section](#make-a-deposit) for how to do this. After that, get tipping! <br/>
 
-#### Automatic Submission Mode
+## Automatic Submission Mode
 Here's how to use the extension in <em>automatic submit mode</em> (the default mode):
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1a.gif"/></center>
 
-#### Fill-Only Mode
+## Fill-Only Mode
 If you want to use it so it only _fills_ the comment, and doesn't auto-submit it, go to <a href="about:extensions"><code>about:extensions</code></a>, then scroll to the Reddit Tip Extension. 
 
 <br/>Click 'Options', then change the tipping mode to the second option.
@@ -40,7 +40,7 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 <br/>After that, use it like so:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1b.gif"/></center>
 
-## Make A Deposit
+### Make A Deposit
 1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Deposit` button in the middle, as shown here:
@@ -48,7 +48,7 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 
 * When `/u/tippr` sends you a message with the deposit instructions, send any amount of BCH to the given address!
 
-## Check Your Balance
+### Check Your Balance
 1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Check Balance` button in the middle, as shown here:
@@ -56,7 +56,7 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 
 * `/u/tippr` will send you a message with your balance soon!
 
-## Make A Withdrawal
+### Make A Withdrawal
 1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Withdrawal` button in the middle, as shown here:
