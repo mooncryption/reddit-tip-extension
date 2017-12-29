@@ -1,16 +1,36 @@
+var version = "0.0.1beta1";
 var rt_tip_word = "give tip"; // "tip" "tippr"
 var rt_log = "Reddit Tip Extension by /u/mooncryption: ";
 var rt_truelink = true;
 var rt_ran_already = false;
 var rt_autosend = true;
+var tipInProgress = false;
+var tipData = {};
 
 chrome.storage.sync.get({
     autotip: "true",
     word: "give tip",
-}, function(items) {
+    tipInProgress: false,
+    tipData: {
+        rtip: false,
+    }
+}, function (items) {
     rt_autosend = (items.autotip == "true" || items.autotip == true);
     rt_tip_word = items.word;
+    tipInProgress = items.tipInProgress;
+    tipData = items.tipData;
 });
+
+(function($) {
+    $.fn.goTo = function() {
+        if ($(this) && $(this).offset() && $(this).offset.top) {
+            $('html, body').animate({
+                scrollTop: $(this).offset().top + 'px'
+            }, 'fast');
+        }
+        return this; // for chaining...
+    }
+})(jQuery);
 
 function rtError(message) {
     console.log("[REDDIT TIP EXTENSION] Error: ", message);
@@ -25,76 +45,89 @@ function getURLParams(url) {
 
     // get query string from url (optional) or window
     var queryString = url ? url.split('?')[1] : window.location.search.slice(1);
-  
+
     // we'll store the parameters here
     var obj = {};
-  
+
     // if query string exists
     if (queryString) {
-  
-      // stuff after # is not part of query string, so get rid of it
-      queryString = queryString.split('#')[0];
-  
-      // split our query string into its component parts
-      var arr = queryString.split('&');
-  
-      for (var i=0; i<arr.length; i++) {
-        // separate the keys and the values
-        var a = arr[i].split('=');
-  
-        // in case params look like: list[]=thing1&list[]=thing2
-        var paramNum = undefined;
-        var paramName = a[0].replace(/\[\d*\]/, function(v) {
-          paramNum = v.slice(1,-1);
-          return '';
-        });
-  
-        // set parameter value (use 'true' if empty)
-        var paramValue = typeof(a[1])==='undefined' ? true : a[1];
-  
-        // (optional) keep case consistent
-        if (paramName.toLowerCase) paramName = paramName.toLowerCase();
-        if (paramValue.toLowerCase) paramValue = paramValue.toLowerCase();
-  
-        // if parameter name already exists
-        if (obj[paramName]) {
-          // convert value to array (if still string)
-          if (typeof obj[paramName] === 'string') {
-            obj[paramName] = [obj[paramName]];
-          }
-          // if no array index number specified...
-          if (typeof paramNum === 'undefined') {
-            // put the value on the end of the array
-            obj[paramName].push(paramValue);
-          }
-          // if array index number specified...
-          else {
-            // put the value at that index number
-            obj[paramName][paramNum] = paramValue;
-          }
+
+        // stuff after # is not part of query string, so get rid of it
+        queryString = queryString.split('#')[0];
+
+        // split our query string into its component parts
+        var arr = queryString.split('&');
+
+        for (var i = 0; i < arr.length; i++) {
+            // separate the keys and the values
+            var a = arr[i].split('=');
+
+            // in case params look like: list[]=thing1&list[]=thing2
+            var paramNum = undefined;
+            var paramName = a[0].replace(/\[\d*\]/, function (v) {
+                paramNum = v.slice(1, -1);
+                return '';
+            });
+
+            // set parameter value (use 'true' if empty)
+            var paramValue = typeof (a[1]) === 'undefined' ? true : a[1];
+
+            // (optional) keep case consistent
+            if (paramName.toLowerCase) paramName = paramName.toLowerCase();
+            if (paramValue.toLowerCase) paramValue = paramValue.toLowerCase();
+
+            // if parameter name already exists
+            if (obj[paramName]) {
+                // convert value to array (if still string)
+                if (typeof obj[paramName] === 'string') {
+                    obj[paramName] = [obj[paramName]];
+                }
+                // if no array index number specified...
+                if (typeof paramNum === 'undefined') {
+                    // put the value on the end of the array
+                    obj[paramName].push(paramValue);
+                }
+                // if array index number specified...
+                else {
+                    // put the value at that index number
+                    obj[paramName][paramNum] = paramValue;
+                }
+            }
+            // if param name doesn't exist yet, set it
+            else {
+                if (paramValue == "true") {
+                    obj[paramName] = true;
+                } else if (paramValue == "false") {
+                    obj[paramName] = false;
+                } else if (parseFloat(paramValue) != NaN && parseFloat(paramValue) > 0) {
+                    obj[paramName] = parseFloat(paramValue);
+                } else {
+                    obj[paramName] = paramValue;
+                }
+            }
         }
-        // if param name doesn't exist yet, set it
-        else {
-          if (paramValue == "true") {
-              obj[paramName] = true;
-          } else if (paramValue == "false") {
-              obj[paramName] = false; 
-          } else if (parseFloat(paramValue) != NaN && parseFloat(paramValue) > 0) {
-              obj[paramName] = parseFloat(paramValue);
-          } else {
-            obj[paramName] = paramValue;
-          }
-        }
-      }
     }
-  
+
     return obj;
-  }
+}
 
 function checkForTips() {
+    /*
+    checkForTips()
+    -------------
+    Used to check for an incoming tip in the URL
+    */
     console.log("Checking for tip requests...")
-    var p = getURLParams(decodeURIComponent(window.location.href));
-    if (!(p.rtip && p.rtip == true && p.rcomment == false)) {
+    var p = tipData;
+    chrome.storage.sync.get({
+        tipData: {
+            rtip: false,
+        }
+    }, function(items) {
+        p = items.tipData;
+    })
+    if (!(p.rtip && p.rtip == true && p.rcomment == false && tipInProgress == true && getURLParams(decodeURIComponent(window.location.href)).rtip && getURLParams(decodeURIComponent(window.location.href)).rtip == true)) {
+        console.log("No tip request", p, getURLParams(decodeURIComponent(window.location.href)))
         return 0;
     }
     var rafter = "";
@@ -105,9 +138,17 @@ function checkForTips() {
     console.log("Found Tip Request!", p, c);
     if ($(".usertext.cloneable").length) {
         $(".usertext.cloneable")[0].getElementsByClassName("md")[0].children[0].value = c;
-        $(".usertext.cloneable")[0].getElementsByClassName("save")[0].innerHTML = "send a tip!";
+        var attachId = `replybox-${Math.floor(Math.random() * 10000000)}`;
+        $("#attachId").goTo();
+        $(".usertext.cloneable")[0].getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
+        chrome.storage.sync.set({
+            tipInProgress: false,
+            tipData: {
+                rtip: false,
+            }
+        }, function(){});
         if (rt_autosend) {
-            setTimeout(function(){ $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click();}, 50);
+            setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
         }
         window.location.href = `#${$(".usertext.cloneable")[0].id}`;
     } else {
@@ -115,7 +156,7 @@ function checkForTips() {
     }
 }
 
-function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = false, message="") {
+function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = false, message = "") {
     document.getElementById("rt-modal").style.display = "none";
     for (j = 0; j < document.getElementsByClassName("rt-modal-class").length; ++j) {
         document.getElementsByClassName("rt-modal-class")[j].style.display = "none";
@@ -123,8 +164,38 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
 
     console.log(rtLog("launchTip"), amount, unit, postLink, postAuthor, isComment)
     if (!isComment) {
-        window.location.href = `${postLink}?${encodeURIComponent(`rtip=true&ramount=${amount}&runit=${unit}&rauthor=${postAuthor}&rcomment=${isComment}`)}`;
+        chrome.storage.sync.set({
+            tipInProgress: true,
+            tipData: {
+                rtip: true,
+                ramount: amount,
+                runit: unit,
+                rauthor: postAuthor,
+                rcomment: isComment,
+                rmessage: message
+            }
+        }, function() {
+            // Update status to let user know options were saved.
+            window.location.href = `${postLink}?${encodeURIComponent(`rtip=true`)}`;
+            setTimeout(location.reload, 100);
+            setTimeout(function(){window.location.href = `${postLink}?${encodeURIComponent(`rtip=true`)}`;}, 101);
+        });
         return 0;
+    } else {
+        chrome.storage.sync.set({
+            tipInProgress: true,
+            tipData: {
+                rtip: true,
+                ramount: amount,
+                runit: unit,
+                rauthor: postAuthor,
+                rcomment: isComment,
+                rmessage: message
+            }
+        }, function() {
+            // Update status to let user know options were saved.
+            
+        });
     }
     var rafter = "";
     if (message && message !== "") {
@@ -138,9 +209,18 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         document.getElementsByClassName("bylink")[i].parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click();
         console.log(document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
         document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
-        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "send a tip!";
+        document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
+        chrome.storage.sync.set({
+            tipInProgress: false,
+            tipData: {
+                rtip: false
+            }
+        }, function() {
+            // Update status to let user know options were saved.
+            
+        });
         if (rt_autosend) {
-            setTimeout(function(){document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();}, 50);
+            setTimeout(function () { document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click(); }, 50);
         }
     }
 }
@@ -168,7 +248,7 @@ function redditTipCore() {
     }
 
     var rt_modal_main = document.createElement("div");
-    rt_modal_main.innerHTML='<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/>';
+    rt_modal_main.innerHTML = '<input type="number" step="0.01" value="0.0001" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" id="rte-message" class="rte-message-class"/><br/><br/>';
     var rt_btn = document.createElement("span");
     rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn">Send Tip!</button><br/><br/>';
     rt_modal_main.appendChild(rt_btn);
@@ -181,16 +261,21 @@ function redditTipCore() {
                 this.parentElement.parentElement.getElementsByClassName("rte-unit-class")[0].value,
                 modal.getAttribute("rt-post-link"),
                 modal.getAttribute("rt-post-author"),
-                (modal.getAttribute("rt-is-comment") == "true")
+                (modal.getAttribute("rt-is-comment") == "true"),
+                this.parentElement.parentElement.getElementsByClassName("rte-message-class")[0].value || ""
             )
         } else {
             rtError("We couldn't trace the post link or author.");
             console.log(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
         }
     }
-    
+
     var rt_modal_notes = document.createElement("div"); 
-    rt_modal_notes.innerHTML='<hr/><h3 class="rt-notes-header">Notes</h3>  <ul class="rt-bulletlist"><li>You\'ll need to have a deposit of BCH before you can tip. See <a href="https://www.reddit.com/r/tippr/wiki/reddit-usage">here</a> for how to do this.</li><li>Don\'t know what Bitcoin Cash (BCH) is? Ask about it <a href="https://reddit.com/r/btc">here.</a></ul> ';
+    var bugMsg = `\n\n\n\n-----\nVersion: ${version}\nBrowser Agent: ${navigator.userAgent}\n`.replace(/;/g, "");
+    console.log(bugMsg);
+    var letUsKnow = encodeURI(`https://www.reddit.com/message/compose/?to=mooncryption&subject=Reddit Tip Extension -&message=${bugMsg}`);
+    console.log(letUsKnow);
+    rt_modal_notes.innerHTML = `<hr/><h3 class="rt-notes-header">Notes</h3>  <ul class="rt-bulletlist"><li>You\'ll need to have a deposit of BCH before you can tip. See <a href="https://www.reddit.com/r/tippr/wiki/reddit-usage">here</a> for how to do this.</li><li>Don\'t know what Bitcoin Cash (BCH) is? Ask about it <a href="https://reddit.com/r/btc">here.</a><li>Need help? Is there a bug? <b><a target="_blank" href="${letUsKnow}">Let Us Know</a></b></ul> `;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_notes);
 
     if (window.location.href.indexOf("/comments/") <= -1) {
@@ -202,15 +287,15 @@ function redditTipCore() {
     } else {
         try {
             document.getElementsByTagName("body")[0].appendChild(modal);
-        } catch (error)  {
+        } catch (error) {
             //rtError(error);
-        } 
+        }
     }
     console.log(rt_log + "attaching...")
 
     for (i = 0; i < document.getElementsByClassName("rt-modal-class").length; ++i) {
-        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeypress = function(){
-            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function(data, status) {
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeypress = function () {
+            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
                 if (status == 'success') {
                     var price = data.USD || 3000.0;
                     var x = document.getElementsByClassName("rt-usdv");
@@ -235,8 +320,8 @@ function redditTipCore() {
                 }
             });
         }
-        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onchange = function(){
-            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function(data, status) {
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onchange = function () {
+            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
                 if (status == 'success') {
                     var price = data.USD || 3000.0;
                     var x = document.getElementsByClassName("rt-usdv");
@@ -286,15 +371,16 @@ function redditTipCore() {
     for (i = 0; i < buttonsList.length; i++) {
         if (!buttonsList[i]) { continue; }
         var rt = document.createElement("li");
-        if (rt.classList.contains("rte-activated")) {
+        if (buttonsList[i].classList.contains("rte-activated")) {
             continue;
         }
         rt.classList = ["tip-button", "login-required", "rte-activated"];
         rt.innerHTML = `<a href="javascript:void(0)" class="tipbtn access-required" data-event-action="tip">${rt_tip_word}</a>`;
+        buttonsList[i].classList.add("rte-activated");
         if (buttonsList[i].parentElement.getElementsByClassName("author")[0]) {
-            rt.setAttribute("data-author",buttonsList[i].parentElement.getElementsByClassName("author")[0].innerHTML || "");
+            rt.setAttribute("data-author", buttonsList[i].parentElement.getElementsByClassName("author")[0].innerHTML || "");
         } else {
-            rt.setAttribute("data-author","");
+            rt.setAttribute("data-author", "");
         }
         isComment = false;
         plink = "";
@@ -337,9 +423,14 @@ function rActivate(force = false) {
         if (true) {
             if (!rt_ran_already || force) {
                 console.log(rt_log + "beginning launch...")
-                checkForTips();
-                redditTipCore();
-                $(window).bind('hashchange', function () {checkForTips(); rActivate(true);});
+                try {
+                    checkForTips();
+                    redditTipCore();
+                    $(window).bind('hashchange', function () { checkForTips(); rActivate(true); }); 
+                } catch (err) {
+                    console.log(rt_log, " caught error: ", err);
+                    rActivate(true);
+                }
             } else {
                 console.log(rt_log + "waiting for signal...")
             }

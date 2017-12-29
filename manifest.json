@@ -13,7 +13,7 @@
     "homepage_url": "https://github.com/mooncryption/reddit-tip-extension",
     "description": "Works with /u/tippr on Reddit to tip posts/comments with BCH!",
     "minimum_chrome_version": "50",
-    "minimum_opera_version": "48",
+
     "permissions": [
         "https://*.reddit.com/*",
         "http://*.reddit.com/*",
@@ -47,7 +47,8 @@
         "https://*.reddit.com/*.json",
         "https://*.reddit.com/*.json?*",
         "https://*.reddit.com/*.json-html",
-        "https://*.reddit.com/*.json-html?*"
+        "https://*.reddit.com/*.json-html?*",
+        "https://*.reddit.com/message/*"
         ],
         "run_at": "document_start"
       }]
