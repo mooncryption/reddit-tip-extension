@@ -26,25 +26,25 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gif-1b.gif"/></center>
 
 ## Make A Deposit
-1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Deposit` button in the middle, as shown here:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/deposit.gif"/></center>
 
-3. When `/u/tippr` sends you a message with the deposit instructions, send any amount of BCH to the given address!
+* When `/u/tippr` sends you a message with the deposit instructions, send any amount of BCH to the given address!
 
 ## Check Your Balance
-1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Check Balance` button in the middle, as shown here:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/balance.gif"/></center>
 
-3. `/u/tippr` will sends you a message with your balance soon!
+* `/u/tippr` will sends you a message with your balance soon!
 
 ## Make A Withdrawal
-1. Go to any Reddit sub (e.g. https://reddit.com/r/btc).
+1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
 2. Click the `give tip` button on any post. Instead of giving a tip, click the `Make a Withdrawal` button in the middle, as shown here:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/withdraw.gif"/></center>
 
-3. If your details are correct, `/u/tippr` will initiate your withdrawal soon!
+* If your details are correct, `/u/tippr` will initiate your withdrawal soon!
