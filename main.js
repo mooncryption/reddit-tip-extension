@@ -290,7 +290,7 @@ function redditTipCore() {
     }
 
     var rt_modal_more = document.createElement("div");
-    rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button> &nbsp; &middot; &nbsp; <button id="btn-report" class="btn-report">Report Bug</button> <br/>`;
+    rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button> &nbsp; &middot; &nbsp; <button id="btn-report" class="btn-report">Report Bug</button> &nbsp; <button id="btn-options" class="btn-options"><b>Settings</b></button> <br/>`;
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_more);
 
     var rt_modal_notes = document.createElement("div");
@@ -328,6 +328,16 @@ function redditTipCore() {
             }
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-report")[0].onclick = function () {
                 morebutton("feedback");
+            }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onclick = function () {
+                if (chrome.runtime.openOptionsPage) {
+                    // New way to open options pages, if supported (Chrome 42+).
+                    chrome.runtime.openOptionsPage();
+                  } else {
+                    // Reasonable fallback.
+                    chrome.runtime.sendMessage({action: "options"}, function(response) {
+                      });
+                  }
             }
         } catch (err) {
             console.log("Caught error", err);

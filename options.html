@@ -4,34 +4,55 @@
 <head>
   <title>Reddit Tip Extension &middot; Options</title>
   <style>
-    body: {
+    body {
       padding: 10px;
+    }
+    #status {
+      text-decoration: italic;
+      color: gray;
+    }
+    .footr {
+      font-size: 10px;
     }
   </style>
 </head>
 
 <body>
-  Tipping Style (after button press):
+  Tipping Mode:
   <select id="autotip">
     <option value="true">Automatic (Submit Reply)</option>
-    <option value="false">Fill Reply but Don't Submit</option>
+    <option value="false">Fill-Only (Write but Don't Submit)</option>
   </select>
-  <br/> Tipping Button Phrase:
+  <br/><br/> Tipping Button Phrase:
   <select id="word">
-    <option value="give tip">give tip</option>
-    <option value="tip">tip</option>
-    <option value="tippr">tippr</option>
-    <option value="give bch">give bch</option>
+    <option value="give tip">"give tip"</option>
+    <option value="tip">"tip"</option>
+    <option value="tippr">"tippr"</option>
+    <option value="bch">"bch"</option>
+    <option value="use tippr">"use tippr"</option>
+    <option value="give bch">"give bch"</option>
   </select>
-  <br/>
+  <br/><br/>
 
   <!-- <label>
     <input type="checkbox" id="like">
     I like colors.
   </label> -->
 
-  <div id="status"></div>
-  <button id="save">Save</button>
+  <div id="status"></div><br/>
+  <button id="save">Save Settings</button>
+
+  <br/><br/><hr>
+  <div class="footr">
+  <center>
+  <a href="https://mooncryption.github.io/reddit-tip-extension">Docs/Help</a>
+  &middot;
+  <a href="https://reddit.com/u/mooncryption">Contact</a>
+  &middot;
+  <a href="https://reddit.com/r/tippr/wiki/">Powered by Tippr</a>
+  </center>
+  </div>
+  <br/>
 
   <script src="options.js"></script>
 </body>
