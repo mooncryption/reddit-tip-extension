@@ -9,6 +9,7 @@
         - [Make A Deposit](#make-a-deposit)
         - [Check Your Balance](#check-your-balance)
         - [Make A Withdrawal](#make-a-withdrawal)
+        - [Change the Settings](#change-the-settings)
 - [What is Bitcoin Cash (BCH)?](#what-is-bitcoin-cash-bch)
 
 <!-- /TOC -->
@@ -63,6 +64,20 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/withdraw.gif"/></center>
 
 * If your details are correct, `/u/tippr` will initiate your withdrawal soon!
+
+### Change the Settings
+There are many settings available for you to change! Take a look below:
+<center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/settings.jpg"/></center>
+
+1. The `Tipping Mode` setting configures whether the extension will automatically send the tip, after you press the `Send Tip` button, or if it will just fill in the comment and wait for you to submit.
+
+2. The `Tipping Button Phrase` setting configures what word the extension will add to the button lists (e.g. `give tip` or `tip`).
+
+3. The `Default Unit` setting configures the default unit the extension will use for tips (e.g. `bch, usd, bits`).
+
+4. The `Default Amount` setting configures the default amount of the unit that will be used (default: `0.0001`).
+
+5. The `Default Step` setting configures the stepping interval in the input box of the amount, when tipping. You can open a tipping page, click `give tip`, and press the `up` or `down` arrow keys on the input box to see what a 'stepping interval' is. 
 
 # What is Bitcoin Cash (BCH)?
 Bitcoin Cash is a new version of Bitcoin that enables super-fast, low-fee transactions. Learn more at [the official website](http://bitcoincash.org).
