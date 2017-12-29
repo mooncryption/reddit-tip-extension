@@ -402,6 +402,24 @@ function redditTipCore() {
             modal.setAttribute("rt-post-link", "");
             modal.setAttribute("rt-post-author", "");
             modal.setAttribute("rt-is-comment", "false");
+            try {
+                x = $(".rt-modal-class");
+                for (i = 0; i < x.length; ++i) {
+                    x[i].style.display = "none";
+                }
+            } catch (e) {
+                
+            }
+        }
+        try {
+            x = $(".rt-modal-class");
+            for (i = 0; i < x.length; ++i) {
+                if (event.target == x[i]) {
+                    x[i].style.display = "none";
+                }
+            }
+        } catch (e) {
+            
         }
     }
     for (i = 0; i < buttonsList.length; i++) {
