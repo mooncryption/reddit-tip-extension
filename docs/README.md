@@ -66,7 +66,9 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 * If your details are correct, `/u/tippr` will initiate your withdrawal soon!
 
 ### Change the Settings
-There are many settings available for you to change! Take a look below:
+There are many settings available for you to change! You can access these by right-clicking the extension's icon in the top-right toolbar, then clicking `Options`.<br/>
+
+Take a look below:
 <center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/settings.jpg"/></center>
 
 1. The `Tipping Mode` setting configures whether the extension will automatically send the tip, after you press the `Send Tip` button, or if it will just fill in the comment and wait for you to submit.
