@@ -255,7 +255,7 @@ function redditTipCore() {
     var modal = document.createElement("div");
     modal.classList = ["rt-modal-class"];
     modal.id = "rt-modal";
-    modal.innerHTML = '<div class="rt-modal-content"><div class="rt-modal-header"><span class="rt-modal-close">&times;</span><h1>Give a Tip!</h1></div><div class="rt-modal-body"></div><hr/><div class="rt-modal-footer"><em>Made with love by <a href="https://reddit.com/u/mooncryption">/u/mooncryption</a> &middot; <a href="https://github.com/mooncryption/reddit-tip-extension">Github Repository</a> &middot; <a href="https://reddit.com/u/tippr">Powered by /u/tippr</a></em></div></div>';
+    modal.innerHTML = '<div class="rt-modal-content"><div class="rt-modal-header"><span class="rt-modal-close">&times;</span><h1>Give a Tip!</h1></div><div class="rt-modal-body"></div><hr/><div class="rt-modal-footer"><em>Made with love by <a href="https://reddit.com/u/mooncryption">/u/mooncryption</a> &middot; <a href="https://mooncryption.github.io/reddit-tip-extension">Official Website (Docs)</a> &middot; <a href="https://www.reddit.com/r/tippr/wiki/index">Powered by /u/tippr</a></em></div></div>';
     var rt_modal_maintext = document.createElement("p");
     rt_modal_maintext.innerHTML = "Use the settings below to change the tip amount, then click the button to give your tip!<br/><br/>";
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_maintext);
