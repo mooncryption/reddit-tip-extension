@@ -1,3 +1,17 @@
+# Table of Contents
+<!-- TOC -->
+
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Usage](#usage)
+            - [Automatic Submission Mode](#automatic-submission-mode)
+            - [Fill-Only Mode](#fill-only-mode)
+    - [Make A Deposit](#make-a-deposit)
+    - [Check Your Balance](#check-your-balance)
+    - [Make A Withdrawal](#make-a-withdrawal)
+
+<!-- /TOC -->
+
 # Installation
 <center>
 <button onclick="startInstall">
@@ -11,7 +25,7 @@
 2. That's it! Go to any Reddit subreddit in a new tab, and start clicking those `give tip` buttons!
 
 # Usage 
-0. First, you'll need to get a deposit in! Scroll down to the [Deposit Section](#make-a-deposit) for how to do this. After that, get tipping! See below for instructions.<br/>
+0. First, you'll need to get a deposit in! Scroll down to the [Deposit Section](#make-a-deposit) for how to do this. After that, get tipping! <br/>
 
 #### Automatic Submission Mode
 Here's how to use the extension in <em>automatic submit mode</em> (the default mode):
