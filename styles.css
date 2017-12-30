@@ -56,3 +56,18 @@
     margin-left: 0 !important;
     background-color: white;
 }
+
+#installed-img {
+    vertical-align: middle;
+}
+#outdated-img {
+    vertical-align: middle;
+}
+#unsupported-img {
+    vertical-align: middle;
+}
+
+.install-div {
+    font-size: 22px !important;
+    border: 1px dashed gray;
+}

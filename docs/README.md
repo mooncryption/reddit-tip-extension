@@ -24,7 +24,7 @@
 </center>
 
 
-1. Click the button above to start downloading and installing the extension. Make sure you're on a supported browser, such as Google Chrome or Opera. The latest version is <code data-latest-version="0.0.1" id="latest-version">0.0.1</code>.<br/>
+1. <span id="installation-first-sentence">Click the button above to start downloading and installing the extension. Make sure you're on a supported browser, such as Google Chrome or Opera.</span> The latest version is <code data-latest-version="0.0.1" id="latest-version">0.0.1</code>.<br/>
 
 2. That's it! Go to any Reddit subreddit in a new tab, and start clicking those `give tip` buttons!
 
