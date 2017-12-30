@@ -155,10 +155,13 @@ function checkForTips() {
         return 0;
     }
     var rafter = "";
-    if (p.rmessage && p.rmessage !== "") {
+    if (p.rmessage && p.rmessage !== "" && p.rmessage !== "none") {
         rafter = `\n\n${p.rmessage}`
     }
     var c = `${p.ramount} ${p.runit} u/tippr ${rafter}`;
+    if (p.runit == "gild") {
+        c = `u/tippr gild ${rafter}`;
+    }
     console.log("Found Tip Request!", p, c);
     if ($(".usertext.cloneable").length) {
         $(".usertext.cloneable")[0].getElementsByClassName("md")[0].children[0].value = c;
@@ -226,10 +229,13 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         }
     }
     var rafter = "";
-    if (message && message !== "") {
+    if (message && message !== "" && message !== "none") {
         rafter = `\n\n${message}`
     }
     var c = `${amount} ${unit} u/tippr ${rafter}`;
+    if (unit == "gild") {
+        c = `u/tippr gild ${rafter}`;
+    }
     console.log("comment", c);
     for (i = 0; i < document.getElementsByClassName("bylink").length; i += 0) {
         if (!(document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") && document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") == postLink)) {
@@ -319,9 +325,9 @@ function redditTipCore() {
     }
 
     var rt_modal_main = document.createElement("div");
-    rt_modal_main.innerHTML = `<input type="number" step="${rt_step}" value="${rt_amt}" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" value=" " id="rte-message" class="rte-message-class"/><br/><br/>`;
+    rt_modal_main.innerHTML = `Amount (required):&nbsp; <input type="number" step="${rt_step}" value="${rt_amt}" id="rte-amount" class="rte-amount-class" name="rte-amount"/> <select name="rte-unit" class="rte-unit-class" id="rte-unit"><option value="bch">BCH&nbsp;&nbsp;</option><option value="usd">USD&nbsp;&nbsp;</option><option value="bits">bits&nbsp;&nbsp;</option></select>&nbsp;&nbsp;(<span class="rt-usdv" id="rt-usdv">bitcoin cash</span>)<br/><br/> Message (optional): <input type="text" value=" " id="rte-message" class="rte-message-class"/><br/><br/>`;
     var rt_btn = document.createElement("span");
-    rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn">Send Tip!</button><br/><br/>';
+    rt_btn.innerHTML = '<button class="rte-btn" id="rte-btn"><b>Send Tip!</b></button> &nbsp;&middot;&nbsp; <button class="rte-gild" id="rte-gild">Give gold!</button> <br/><br/>';
     rt_modal_main.appendChild(rt_btn);
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_main);
     rt_btn.children[0].onclick = function () {
@@ -334,6 +340,26 @@ function redditTipCore() {
                 modal.getAttribute("rt-post-author"),
                 (modal.getAttribute("rt-is-comment") == "true"),
                 this.parentElement.parentElement.getElementsByClassName("rte-message-class")[0].value || ""
+            )
+        } else {
+            rtError("We couldn't trace the post link or author.");
+            console.log(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
+        }
+    }
+    rt_btn.children[1].onclick = function() {
+        var confirmation = window.confirm(`Giving Gold to (or "gilding") a post/comment gives the author one month of Reddit Gold. It costs $2.50 USD worth of Bitcoin Cash to gild. \n\n Press "OK" to accept the terms and gild this post with $2.50 USD of Bitcoin Cash. \n Press "CANCEL" to cancel the gilding.`);
+        if (!confirmation) {
+            return 0;
+        }
+        if (modal.getAttribute("rt-post-link") != "" && modal.getAttribute("rt-post-author") != "") {
+            var msg = window.prompt(`If you want to (optionally) add a message with your gilding, type it below. \n\n Otherwise, just hit enter.`) || "";
+            launchTip(
+                2.50,
+                "gild",
+                modal.getAttribute("rt-post-link"),
+                modal.getAttribute("rt-post-author"),
+                (modal.getAttribute("rt-is-comment") == "true"),
+                msg
             )
         } else {
             rtError("We couldn't trace the post link or author.");
@@ -383,6 +409,8 @@ function redditTipCore() {
                 morebutton("feedback");
             }
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onclick = function () {
+                this.innerHTML =
+                    `<img alt="..." src="https://mooncryption.github.io/reddit-tip-extension/marketing/loading.gif"/>`; 
                 if (chrome.runtime.openOptionsPage) {
                     // New way to open options pages, if supported (Chrome 42+).
                     chrome.runtime.openOptionsPage();
@@ -395,59 +423,43 @@ function redditTipCore() {
         } catch (err) {
             console.log("Caught error", err);
         }
+        var savedPrice = 0.0;
+        const fxn = function () {
+            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
+                var price = 3000.0;
+                if (status == 'success') {
+                    price = data.USD;
+                    savedPrice = data.USD;
+                } else if (savedPrice != 0.0) {
+                    price = savedPrice;
+                } 
+                var x = document.getElementsByClassName("rt-usdv");
+                for (i = 0; i < x.length; ++i) {
+                    var amt = (1.0 * x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value) || 0;
+                    var unit = x[i].parentElement.getElementsByClassName("rte-unit-class")[0].value || 'bitcoin cash';
+                    var r = 0;
+                    var rs = "tip";
+                    if (unit == 'bch') {
+                        r = (price * amt).toFixed(2);
+                        rs = `&asymp;$${r}`;
+                    } else if (unit == 'bits') {
+                        r = (price * amt * 0.000001).toFixed(2);
+                        rs = `&asymp;$${r}`;
+                    } else if (unit == 'usd') {
+                        r = (amt * (1.00 / price)).toFixed(8);
+                        if (amt == 0 || amt < 0.00000001) r = 0;
+                        rs = `&asymp;${r} bch`;
+                    }
+                    x[i].innerHTML = rs;
+                }
+            });
+        }
 
-        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeydown = function () {
-            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
-                if (status == 'success') {
-                    var price = data.USD || 3000.0;
-                    var x = document.getElementsByClassName("rt-usdv");
-                    for (i = 0; i < x.length; ++i) {
-                        var amt = x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value || 1;
-                        var unit = x[i].parentElement.getElementsByClassName("rte-unit-class")[0].value || 'bitcoin cash';
-                        var r = 0;
-                        var rs = "tip";
-                        if (unit == 'bch') {
-                            r = (price * amt).toFixed(2);
-                            rs = `$${r}`;
-                        } else if (unit == 'bits') {
-                            r = (price * amt * 0.000001).toFixed(2);
-                            rs = `$${r}`;
-                        } else if (unit == 'usd') {
-                            r = (amt * (1.00 / price)).toFixed(8);
-                            if (amt == 0 || amt < 0.00000001) r = 0;
-                            rs = `${r} bch`;
-                        }
-                        x[i].innerHTML = rs;
-                    }
-                }
-            });
-        }
-        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onchange = function () {
-            $.get("https://min-api.cryptocompare.com/data/price?fsym=BCH&tsyms=USD", function (data, status) {
-                if (status == 'success') {
-                    var price = data.USD || 3000.0;
-                    var x = document.getElementsByClassName("rt-usdv");
-                    for (i = 0; i < x.length; ++i) {
-                        var amt = x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value || 1;
-                        var unit = x[i].parentElement.getElementsByClassName("rte-unit-class")[0].value || 'bch';
-                        var r = 0;
-                        var rs = "tip";
-                        if (unit == 'bch') {
-                            r = (price * amt).toFixed(2);
-                            rs = `$${r}`;
-                        } else if (unit == 'bits') {
-                            r = (price * amt * 0.000001).toFixed(2);
-                            rs = `$${r}`;
-                        } else if (unit == 'usd') {
-                            r = (amt * (1.00 / price)).toFixed(8);
-                            rs = `${r} bch`;
-                        }
-                        x[i].innerHTML = rs;
-                    }
-                }
-            });
-        
-        }
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onkeydown = fxn;
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onchange = fxn;
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-unit-class")[0].onclick = fxn;
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onclick = fxn;
+        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("rte-amount-class")[0].onfocus = fxn;
 
     }
 
