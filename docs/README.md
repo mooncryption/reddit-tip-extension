@@ -7,10 +7,12 @@
     - [Automatic Submission Mode](#automatic-submission-mode)
     - [Fill-Only Mode](#fill-only-mode)
         - [Make A Deposit](#make-a-deposit)
+        - [Give Gold to a Post ("Gilding")](#give-gold-to-a-post-gilding)
         - [Check Your Balance](#check-your-balance)
         - [Make A Withdrawal](#make-a-withdrawal)
         - [Change the Settings](#change-the-settings)
 - [What is Bitcoin Cash (BCH)?](#what-is-bitcoin-cash-bch)
+        - [Terms and Conditions](#terms-and-conditions)
 
 <!-- /TOC -->
 
@@ -51,6 +53,14 @@ If you want to use it so it only _fills_ the comment, and doesn't auto-submit it
 
 * When `/u/tippr` sends you a message with the deposit instructions, send any amount of BCH to the given address!
 
+### Give Gold to a Post ("Gilding")
+1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
+
+2. Click the `give tip` button on any post. Instead of giving a tip, click the `Give Gold!` button right next to the main button, as shown below. Optionally, you may want to add a message. Then, finish the comment:
+<center><img src="https://mooncryption.github.io/reddit-tip-extension/marketing/gild.gif"/></center>
+
+* Giving Reddit Gold to another user via this service costs `$2.50` (charged in BCH).
+
 ### Check Your Balance
 1. Go to any Reddit sub (e.g. [/r/btc](https://reddit.com/r/btc)).
 
@@ -87,3 +97,6 @@ Take a look below:
 Bitcoin Cash is a new version of Bitcoin that enables super-fast, low-fee transactions. Learn more at [the official website](http://bitcoincash.org).
 
 If you have questions, ask in [/r/btc](https://reddit.com/r/btc)!
+
+### Terms and Conditions
+`@mooncryption`, `/u/mooncryption`, and all other developers, users, and contributors to/of this project (The "Reddit Tip Extension") are not liable for any misuse of the product and/or the consequences due to using this product. This service/product is provided "AS IS" under the MIT License. 

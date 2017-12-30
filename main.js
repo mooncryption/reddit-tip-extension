@@ -6,6 +6,7 @@ var rt_ran_already = false;
 var rt_autosend = true;
 var tipInProgress = false;
 var tipData = {};
+var gilding = true;
 var coreRuntime = 0; var checkRuntime = 0;
 var rt_step = 0.01; var rt_amt = 0.0001; var rt_unit = "bch";
 
@@ -18,7 +19,8 @@ chrome.storage.sync.get({
     },
     defaultStep: 0.01,
     defaultAmt: 0.0001,
-    defaultUnit: "bch"
+    defaultUnit: "bch",
+    gilding: true,
 }, function (items) {
     rt_autosend = (items.autotip == "true" || items.autotip == true);
     rt_tip_word = items.word;
@@ -27,6 +29,7 @@ chrome.storage.sync.get({
     rt_step = items.defaultStep;
     rt_amt = items.defaultAmt;
     rt_unit = items.defaultUnit;
+    gilding = items.gilding;
 });
 
 (function ($) {
@@ -366,6 +369,12 @@ function redditTipCore() {
             console.log(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
         }
     }
+    if (gilding == false) {
+        rt_btn.children[1].style.display = "none";
+        rt_btn.children[1].onclick = function() {
+            alert('Giving Reddit Gold ("gilding") has been disabled in your settings. \n\n Click "OK", then click the Settings button if you want to change this.');
+        }
+    }
 
     var rt_modal_more = document.createElement("div");
     rt_modal_more.innerHTML = `<hr/><h3 class="rt-notes-header">More</h3> <button id="btn-deposit" class="btn-deposit">Make a Deposit</button> &nbsp; <button id="btn-balance" class="btn-balance">Check your Balance</button> &nbsp; <button id="btn-withdraw" class="btn-withdraw">Make a Withdrawal</button> &nbsp; &middot; &nbsp; <button id="btn-report" class="btn-report">Report Bug</button> &nbsp; <button id="btn-options" class="btn-options"><b>Settings</b></button> <br/>`;
@@ -413,7 +422,7 @@ function redditTipCore() {
                     modal_i: i
                 });
                 this.innerHTML =
-                    `<img alt="..." height="13px" src="https://mooncryption.github.io/reddit-tip-extension/marketing/loading.gif"/>`; 
+                    `Settings...`; 
                 if (chrome.runtime.openOptionsPage) {
                     chrome.runtime.openOptionsPage();
                     this.innerHTML = `<b>Settings</b>`;
