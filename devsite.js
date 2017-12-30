@@ -20,10 +20,14 @@ function devsite() {
         console.log("You're on the latest version for Reddit Tip Extension: ", version);
         $("#install-div")[0].innerHTML =
             `<img id="installed-img" src="http://www.emoji.co.uk/files/emoji-one/symbols-emoji-one/2118-white-heavy-check-mark.png" height="20" width="20"/> &nbsp; <b>Installed!</b> &nbsp; You're on the latest version.`;
+        $(".installation-first-sentence")[0].innerHTML =
+            `You already have the <em>latest version</em> of the extension. Awesome! `;
     } else {
         console.log("The latest version for Reddit Tip Extension is: ", latestVersion, " but you're on version: ", version);
         $("#install-div")[0].innerHTML = 
             `<img id="outdated-img" src="https://www.gnapartners.com/wp-content/uploads/check-icon.png" width="20" height="20"/> &nbsp; <b>Installed!</b> &nbsp; You're <em>not</em> on the latest version though.`;
+        $(".installation-first-sentence")[0].innerHTML =
+            `You already have the extension, but it seems to be out-of-date. Click <a href="${storeLink}">here</a> to fix this and get the most up-to-date version. `;
     }
 }
 
