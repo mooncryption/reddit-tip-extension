@@ -2,7 +2,17 @@ console.log("Reddit Tip Extension activated - devsite!");
 const version = "0.0.1";
 
 function devsite() {
-    const latestVersion = $("#latest-version").innerHTML;
+    console.log("Checking version...");
+    try {
+        const latestVersion = $("#latest-version").innerHTML || $("#latest-version").getAttribute("data-latest-version");
+    } catch (er) {
+        console.log("version error: ", er);
+        setTimeout(go, 750);
+    }
+    if (!latestVersion) {
+        setTimeout(go, 500);
+        return 0;
+    }
     if (version == latestVersion) {
         console.log("You're on the latest version for Reddit Tip Extension: ", version);
         $("#install-div").innerHTML =
