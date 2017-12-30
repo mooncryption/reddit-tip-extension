@@ -4,6 +4,7 @@ var rt_log = "Reddit Tip Extension by /u/mooncryption: ";
 var rt_truelink = true;
 var rt_ran_already = false;
 var rt_autosend = true;
+var rt_withconf = false;
 var tipInProgress = false;
 var tipData = {};
 var gilding = true;
@@ -23,6 +24,7 @@ chrome.storage.sync.get({
     gilding: true,
 }, function (items) {
     rt_autosend = (items.autotip == "true" || items.autotip == true);
+    rt_withconf = (items.autotip == "with");
     rt_tip_word = items.word;
     tipInProgress = items.tipInProgress;
     tipData = items.tipData;
@@ -179,6 +181,10 @@ function checkForTips() {
         }, function () { });
         if (rt_autosend) {
             setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
+        } else if (rt_withconf) {
+            if (window.confirm(`Would you like to confirm your tip? The text version is listed below: \n----------\n ${c} \n----------\n`)) {
+                setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
+            }
         }
         window.location.href = `#${$(".usertext.cloneable")[0].id}`;
     } else {
@@ -296,6 +302,14 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 yt.getElementsByClassName("save")[0].click();
             } else {
                 bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
+            }
+        } else if (rt_withconf) {
+            if (window.confirm(`Would you like to confirm your tip? The text version is listed below:\n----------\n${c}\n----------\n`)) {
+                if (yt !== false) {
+                    yt.getElementsByClassName("save")[0].click();
+                } else {
+                    bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
+                }
             }
         }
         return 0;
