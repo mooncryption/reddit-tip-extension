@@ -10,11 +10,13 @@
     },
     "author": "@mooncryption",
     "homepage_url": "https://github.com/mooncryption/reddit-tip-extension",
-    "description": "Works with /u/tippr on Reddit to tip posts/comments with BCH!",
+    "description": "Tip and donate Bitcoin Cash to any Reddit user instantly!",
     "minimum_chrome_version": "50",
     "permissions": [
         "https://*.reddit.com/*",
         "http://*.reddit.com/*",
+        "https://*.mooncryption.github.io/*",
+        "http://*.mooncryption.github.io/*",
         "storage"
     ],
     "background" : {
@@ -85,6 +87,21 @@
                 "http://reddit.com/message/inbox/*",
                 "https://*.reddit.com/message/inbox",
                 "https://reddit.com/message/inbox"
+            ]
+        },
+        {
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "jquery.min.js",
+                "devsite.js"
+            ],
+            "matches": [
+                "https://mooncryption.github.io/reddit-tip-extension",
+                "http://mooncryption.github.io/reddit-tip-extension",
+                "https://mooncryption.github.io/*",
+                "http://mooncryption.github.io/*"
             ]
         }
     ]

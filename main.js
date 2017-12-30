@@ -206,20 +206,24 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         });
         return 0;
     } else {
-        chrome.storage.sync.set({
-            tipInProgress: true,
-            tipData: {
-                rtip: true,
-                ramount: amount,
-                runit: unit,
-                rauthor: postAuthor,
-                rcomment: isComment,
-                rmessage: message
-            }
-        }, function () {
-            // Update status to let user know options were saved.
-
-        });
+        try {
+            chrome.storage.sync.set({
+                tipInProgress: true,
+                tipData: {
+                    rtip: true,
+                    ramount: amount || 0,
+                    runit: unit || 'bch',
+                    rauthor: postAuthor || '',
+                    rcomment: isComment || true,
+                    rmessage: message || ""
+                }
+            }, function () {
+                // Update status to let user know options were saved.
+                console.log("updated localStorage");
+            });
+        } catch (err) {
+            console.log("chrome.storage.sync.set error", err);
+        }
     }
     var rafter = "";
     if (message && message !== "") {
@@ -227,28 +231,35 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
     }
     var c = `${amount} ${unit} u/tippr ${rafter}`;
     console.log("comment", c);
-    for (i = 0; i < document.getElementsByClassName("bylink").length; ++i) {
+    for (i = 0; i < document.getElementsByClassName("bylink").length; i += 0) {
         if (!(document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") && document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") == postLink)) {
+            console.log("Tried i:", i);
+            i++;
             continue;
+        } else {
+            console.log("Found i: ", i);
         }
         var bl = document.getElementsByClassName("bylink")[i];
-        console.log("bl:<", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        console.log("bl 1", i, bl, bl.parentElement, bl.parentElement.parentElement);
         xt =  bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0];
 
         bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click(); // CLICK REPLY BTN
 
-        // console.log("bl:>", i, document.getElementsByClassName("bylink")[i], document.getElementsByClassName("bylink")[i].parentElement, document.getElementsByClassName("bylink")[i].parentElement.parentElement);
-        console.log("bl:-", i, bl, bl.parentElement, bl.parentElement.parentElement);
-        console.log("xt", xt);
+        console.log("bl 2", i, document.getElementsByClassName("bylink")[i], document.getElementsByClassName("bylink")[i].parentElement, document.getElementsByClassName("bylink")[i].parentElement.parentElement);
+        console.log("bl 3", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        console.log("i xt", i, xt);
         // throw "";
         // console.log("229:bylink", document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
         var yt = false, tipReady = false;
         try {
+            console.log("trying regular case with BL");
             bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
             bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
             tipReady = true;
         } catch (e1) {
+            console.log("e1", e1);
             try {
+                console.log("trying second case with YT");
                 yt = xt.parentElement.parentElement.parentElement.parentElement.querySelector(".usertext.cloneable")
                 console.log("yt", yt);
                 if (!yt) {
@@ -258,9 +269,10 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 yt.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
                 tipReady = true;
             } catch (e2) {
-                console.log("243:errors", e1, "|||", e2);
+                console.log("e2", e2);
             }
         }
+        console.log("after climax"); ++i;
         chrome.storage.sync.set({
             tipInProgress: false,
             tipData: {
@@ -268,7 +280,7 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             }
         }, function () {
             // Update status to let user know options were saved.
-
+            console.log("cleared local storage");
         });
         if (rt_autosend && tipReady) {
             if (yt !== false) {
@@ -277,6 +289,8 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
             }
         }
+        return 0;
+
     }
 }
 

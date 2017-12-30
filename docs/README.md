@@ -16,13 +16,15 @@
 
 # Installation
 <center>
-<button onclick="startInstall">
+<div class="install-div" id="install-div">
+<button onclick="startInstall" class="install-btn" id="install-btn">
     <a href="">unavailable</a>
-</button><br/>
+</button>
+</div><br/>
 </center>
 
 
-1. Click the button above to start downloading and installing the extension. Make sure you're on a supported browser, such as Google Chrome or Opera.<br/>
+1. Click the button above to start downloading and installing the extension. Make sure you're on a supported browser, such as Google Chrome or Opera. The latest version is <code id="latest-version">0.0.1</code>.<br/>
 
 2. That's it! Go to any Reddit subreddit in a new tab, and start clicking those `give tip` buttons!
 
