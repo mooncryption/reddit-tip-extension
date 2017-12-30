@@ -412,11 +412,11 @@ function redditTipCore() {
                 this.innerHTML =
                     `<img alt="..." src="https://mooncryption.github.io/reddit-tip-extension/marketing/loading.gif"/>`; 
                 if (chrome.runtime.openOptionsPage) {
-                    // New way to open options pages, if supported (Chrome 42+).
                     chrome.runtime.openOptionsPage();
+                    this.innerHTML = `<b>Settings</b>`;
                   } else {
-                    // Reasonable fallback.
                     chrome.runtime.sendMessage({action: "options"}, function(response) {
+                        this.innerHTML = `<b>Settings</b>`;
                       });
                   }
             }
