@@ -14,3 +14,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
     });
 });
+
+chrome.runtime.onInstalled.addListener(function (object) {
+    chrome.tabs.create({url: "https://mooncryption.github.io/reddit-tip-extension/#installation?oninstall=true"}, function (tab) {
+        console.log("New tab launched with extension website (onInstall)");
+    });
+});

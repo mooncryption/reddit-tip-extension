@@ -1,7 +1,17 @@
 console.log("Reddit Tip Extension activated - devsite!");
 const version = "0.0.1";
+var $root = {};
 
 function devsite() {
+    $root = $('html, body');
+
+    $(document).on('click', '.smoothscroll', function (event) {
+        event.preventDefault();
+    
+        $('html, body').animate({
+            scrollTop: $($.attr(this, 'href')).offset().top
+        }, 1000);
+    });
     console.log("Checking version...", $("#latest-version")[0]);
     try {
         var latestVersion = $("#latest-version")[0].innerHTML;
@@ -28,6 +38,16 @@ function devsite() {
             `<img id="outdated-img" src="https://www.gnapartners.com/wp-content/uploads/check-icon.png" width="20" height="20"/> &nbsp; <b>Installed!</b> &nbsp; You're <em>not</em> on the latest version though.`;
         $(".installation-first-sentence")[0].innerHTML =
             `You already have the extension, but it seems to be out-of-date. Click <a href="${storeLink}">here</a> to fix this and get the most up-to-date version. `;
+    }
+    if (window.location.href.indexOf("oninstall=true") != -1) {
+        // just installed extension
+        setTimeout(function() {
+            var link = document.createElement('a');
+            link.href = "#install-div";
+            link.className = "smoothscroll";
+            document.body.appendChild(link);
+            link.click();    
+        }, 2000);
     }
 }
 
