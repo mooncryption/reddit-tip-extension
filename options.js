@@ -5,12 +5,14 @@ function save_options() {
     var am = document.getElementById('amount').value;
     var st = document.getElementById('step').value;
     var un = document.getElementById('unit').value;
+    var gi = document.getElementById('gild').checked;
     chrome.storage.sync.set({
       autotip: au,
       word: wo,
       defaultStep: st,
       defaultAmt: am,
-      defaultUnit: un
+      defaultUnit: un,
+      gilding: gi
     }, function() {
       // Update status to let user know options were saved.
       var status = document.getElementById('status');
@@ -30,13 +32,15 @@ function save_options() {
       word: "give tip",
       defaultStep: 0.01,
       defaultAmt: 0.0001,
-      defaultUnit: "bch"
+      defaultUnit: "bch",
+      gilding: true
     }, function(items) {
       document.getElementById('autotip').value = items.autotip;
       document.getElementById('word').value = items.word;
       document.getElementById('amount').value = items.defaultAmt;
       document.getElementById('step').value = items.defaultStep;
       document.getElementById('unit').value = items.defaultUnit;
+      document.getElementById('gild').checked = items.gilding;
     });
   }
   document.addEventListener('DOMContentLoaded', restore_options);

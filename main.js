@@ -1,4 +1,4 @@
-var version = "0.0.1beta1";
+var version = "0.0.1";
 var rt_tip_word = "give tip"; // "tip" "tippr"
 var rt_log = "Reddit Tip Extension by /u/mooncryption: ";
 var rt_truelink = true;
@@ -409,16 +409,35 @@ function redditTipCore() {
                 morebutton("feedback");
             }
             document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onclick = function () {
+                chrome.storage.sync.set({
+                    modal_i: i
+                });
                 this.innerHTML =
-                    `<img alt="..." src="https://mooncryption.github.io/reddit-tip-extension/marketing/loading.gif"/>`; 
+                    `<img alt="..." height="13px" src="https://mooncryption.github.io/reddit-tip-extension/marketing/loading.gif"/>`; 
                 if (chrome.runtime.openOptionsPage) {
                     chrome.runtime.openOptionsPage();
                     this.innerHTML = `<b>Settings</b>`;
                   } else {
                     chrome.runtime.sendMessage({action: "options"}, function(response) {
-                        this.innerHTML = `<b>Settings</b>`;
-                      });
+                      
+                    });
                   }
+            }
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onblur = function() {
+                this.innerHTML = `<b>Settings</b>`;
+            }
+            
+            window.onblur = function() {
+                try {
+                    chrome.storage.sync.get({
+                        modal_i: 0,
+                    }, function(items) {
+                        i = items.modal_i;
+                        document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].innerHTML = `<b>Settings</b>`;
+                    })
+                } catch (err) {
+                    // eh, doesn't really matter
+                }
             }
         } catch (err) {
             console.log("Caught error", err);
