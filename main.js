@@ -5,6 +5,8 @@ var rt_truelink = true;
 var rt_ran_already = false;
 var rt_autosend = true;
 var rt_withconf = false;
+var notCancelledYet = true;
+var notAcceptedYet = true;
 var tipInProgress = false;
 var tipData = {};
 var gilding = true;
@@ -181,9 +183,15 @@ function checkForTips() {
         }, function () { });
         if (rt_autosend) {
             setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
-        } else if (rt_withconf) {
-            if (window.confirm(`Would you like to confirm your tip? The text version is listed below: \n----------\n ${c} \n----------\n`)) {
+        } else if (rt_withconf && notCancelledYet && notAcceptedYet) {
+            if (notCancelledYet && notAcceptedYet && window.confirm(`Would you like to confirm your tip? The text version is listed below: \n----------\n ${c} \n----------\n`)) {
+                notAcceptedYet = false;
                 setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
+            } else {
+                notCancelledYet = false;
+                setTimeout(function(){
+                    notCancelledYet = true;
+                }, 500);
             }
         }
         window.location.href = `#${$(".usertext.cloneable")[0].id}`;
@@ -303,13 +311,20 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             } else {
                 bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
             }
-        } else if (rt_withconf) {
-            if (window.confirm(`Would you like to confirm your tip? The text version is listed below:\n----------\n${c}\n----------\n`)) {
+        } else if (rt_withconf && notCancelledYet && notAcceptedYet) {
+            if (notCancelledYet && notAcceptedYet && window.confirm(`Would you like to confirm your tip? The text version is listed below:\n----------\n${c}\n----------\n`)) {
+                notAcceptedYet = false;
                 if (yt !== false) {
                     yt.getElementsByClassName("save")[0].click();
                 } else {
                     bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
                 }
+            } else {
+                // window.history.back();
+                notCancelledYet = false;
+                setTimeout(function(){
+                    notCancelledYet = true;
+                }, 500);
             }
         }
         return 0;
