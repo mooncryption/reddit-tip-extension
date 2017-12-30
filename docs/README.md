@@ -12,7 +12,7 @@
         - [Make A Withdrawal](#make-a-withdrawal)
         - [Change the Settings](#change-the-settings)
 - [What is Bitcoin Cash (BCH)?](#what-is-bitcoin-cash-bch)
-        - [Terms and Conditions](#terms-and-conditions)
+    - [Terms and Conditions](#terms-and-conditions)
 
 <!-- /TOC -->
 
@@ -98,5 +98,5 @@ Bitcoin Cash is a new version of Bitcoin that enables super-fast, low-fee transa
 
 If you have questions, ask in [/r/btc](https://reddit.com/r/btc)!
 
-### Terms and Conditions
+## Terms and Conditions
 `@mooncryption`, `/u/mooncryption`, and all other developers, users, and contributors to/of this project (The "Reddit Tip Extension") are not liable for any misuse of the product and/or the consequences due to using this product. This service/product is provided "AS IS" under the MIT License. 
