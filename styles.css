@@ -80,3 +80,145 @@
     /* color: rgb(0, 138, 0) !important; */
     border-color: rgb(0, 102, 0) !important;
 }
+.thicker-alert {
+    color: rgb(110, 0, 0) !important;
+}
+.r-dashboard {
+    margin-left: 5%;
+}
+.r-dashboard > h3 {
+    font-size: 17px;
+    margin-bottom: 8px;
+    margin-top: 5px;
+    font-weight: 500;
+}
+.r-dashboard-header {
+    margin-top: 10px;
+}
+
+
+
+.draw-border-blue {
+    -webkit-box-shadow: inset 0 0 0 2px #037ef1;
+            box-shadow: inset 0 0 0 2px #037ef1;
+    color: #037ef1;
+    -webkit-transition: color 1s 0.0833333333s;
+    transition: color 1s 0.0833333333s;
+    position: relative;
+  }
+  .draw-border-blue::before, .draw-border-blue::after {
+    border: 0 solid transparent;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .draw-border-blue::before {
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+  .draw-border-blue::after {
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+  .draw-border-blue:hover {
+    color: #ae00d1;
+  }
+  .draw-border-blue:hover::before, .draw-border-blue:hover::after {
+    border-color: #ae00d1;
+    -webkit-transition: border-color 0s, width 0.25s, height 0.25s;
+    transition: border-color 0s, width 0.25s, height 0.25s;
+    width: 100%;
+    height: 100%;
+  }
+  .draw-border-blue:hover::before {
+    -webkit-transition-delay: 0s, 0s, 0.25s;
+            transition-delay: 0s, 0s, 0.25s;
+  }
+  .draw-border-blue:hover::after {
+    -webkit-transition-delay: 0s, 0.25s, 0s;
+            transition-delay: 0s, 0.25s, 0s;
+  }
+  
+  .r-btn-blue {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    line-height: 1.5;
+    font: 500 1.2rem 'Roboto Slab', sans-serif;
+    padding: 0.8em 1em;
+    letter-spacing: 0.05rem;
+  }
+  .r-btn-blue:focus {
+    outline: 2px dotted #3649fa;
+  }
+
+
+
+
+  
+  .draw-border-green {
+    -webkit-box-shadow: inset 0 0 0 2px #00b618;
+            box-shadow: inset 0 0 0 2px #00b618;
+    color: #00b618;
+    -webkit-transition: color 1s 0.0833333333s;
+    transition: color 1s 0.0833333333s;
+    position: relative;
+  }
+  .draw-border-green::before, .draw-border-green::after {
+    border: 0 solid transparent;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    bottom: 0;
+    right: 0;
+  }
+  .draw-border-green::before {
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+  }
+  .draw-border-green::after {
+    border-top-width: 2px;
+    border-right-width: 2px;
+  }
+  .draw-border-green:hover {
+    color: #1815f1;
+  }
+  .draw-border-green:hover::before, .draw-border-green:hover::after {
+    border-color: #1815f1;
+    -webkit-transition: border-color 0s, width 0.25s, height 0.25s;
+    transition: border-color 0s, width 0.25s, height 0.25s;
+    width: 100%;
+    height: 100%;
+  }
+  .draw-border-green:hover::before {
+    -webkit-transition-delay: 0s, 0s, 0.25s;
+            transition-delay: 0s, 0s, 0.25s;
+  }
+  .draw-border-green:hover::after {
+    -webkit-transition-delay: 0s, 0.25s, 0s;
+            transition-delay: 0s, 0.25s, 0s;
+  }
+  
+  .r-btn-green {
+    background-color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    line-height: 1.5;
+    font: 500 1.2rem 'Roboto Slab', sans-serif;
+    padding: 0.8em 1em;
+    letter-spacing: 0.05rem;
+  }
+  .r-btn-green:focus {
+    outline: 2px dotted #3649fa;
+  }
+  

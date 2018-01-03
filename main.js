@@ -1,4 +1,4 @@
-var version = "0.0.1";
+const version = chrome.runtime.getManifest().version;
 var rt_tip_word = "give tip"; // "tip" "tippr"
 var rt_log = "Reddit Tip Extension by /u/mooncryption: ";
 var rt_truelink = true;
@@ -12,6 +12,11 @@ var tipData = {};
 var gilding = true;
 var coreRuntime = 0; var checkRuntime = 0;
 var rt_step = 0.01; var rt_amt = 0.0001; var rt_unit = "bch";
+var rt_wd = {};
+
+function clog(msg) {
+    console.log(msg);
+}
 
 chrome.storage.sync.get({
     autotip: "true",
@@ -24,6 +29,10 @@ chrome.storage.sync.get({
     defaultAmt: 0.0001,
     defaultUnit: "bch",
     gilding: true,
+    defaultWithdrawal: {
+        address: "<ADDRESS>",
+        amount: "<AMOUNT>",
+    },
 }, function (items) {
     rt_autosend = (items.autotip == "true" || items.autotip == true);
     rt_withconf = (items.autotip == "with");
@@ -34,6 +43,7 @@ chrome.storage.sync.get({
     rt_amt = items.defaultAmt;
     rt_unit = items.defaultUnit;
     gilding = items.gilding;
+    rt_wd = items.defaultWithdrawal;
 });
 
 (function ($) {
@@ -48,7 +58,7 @@ chrome.storage.sync.get({
 })(jQuery);
 
 function rtError(message) {
-    console.log("[REDDIT TIP EXTENSION] Error: ", message);
+    clog("[REDDIT TIP EXTENSION] Error: ", message);
     alert(`Reddit Tip Extension had an error: \n\n ${message}`);
 }
 
@@ -147,7 +157,7 @@ function checkForTips() {
     Used to check for an incoming tip in the URL
     */
     if (checkRuntime >= 15) return 0;
-    console.log("Checking for tip requests...")
+    clog("Checking for tip requests...")
     checkRuntime += 1;
     var p = tipData;
     chrome.storage.sync.get({
@@ -158,7 +168,7 @@ function checkForTips() {
         p = items.tipData;
     })
     if (!(p.rtip && p.rtip == true && p.rcomment == false && tipInProgress == true && getURLParams(decodeURIComponent(window.location.href)).rtip && getURLParams(decodeURIComponent(window.location.href)).rtip == true)) {
-        console.log("No tip request", p, getURLParams(decodeURIComponent(window.location.href)))
+        clog("No tip request", p, getURLParams(decodeURIComponent(window.location.href)))
         return 0;
     }
     var rafter = "";
@@ -169,7 +179,7 @@ function checkForTips() {
     if (p.runit == "gild") {
         c = `u/tippr gild ${rafter}`;
     }
-    console.log("Found Tip Request!", p, c);
+    clog("Found Tip Request!", p, c);
     if ($(".usertext.cloneable").length) {
         $(".usertext.cloneable")[0].getElementsByClassName("md")[0].children[0].value = c;
         var attachId = `replybox-${Math.floor(Math.random() * 10000000)}`;
@@ -182,14 +192,16 @@ function checkForTips() {
             }
         }, function () { });
         if (rt_autosend) {
+            clog("Starting automatic tipping procedure...");
             setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
         } else if (rt_withconf && notCancelledYet && notAcceptedYet) {
+            clog("Pinging for confirmation of tip...");
             if (notCancelledYet && notAcceptedYet && window.confirm(`Would you like to confirm your tip? The text version is listed below: \n----------\n ${c} \n----------\n`)) {
                 notAcceptedYet = false;
                 setTimeout(function () { $(".usertext.cloneable")[0].getElementsByClassName("save")[0].click(); }, 50);
             } else {
                 notCancelledYet = false;
-                setTimeout(function(){
+                setTimeout(function () {
                     notCancelledYet = true;
                 }, 500);
             }
@@ -206,7 +218,7 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
         document.getElementsByClassName("rt-modal-class")[j].style.display = "none";
     }
 
-    console.log(rtLog("launchTip"), amount, unit, postLink, postAuthor, isComment)
+    clog(rtLog("launchTip"), amount, unit, postLink, postAuthor, isComment)
     if (!isComment) {
         chrome.storage.sync.set({
             tipInProgress: true,
@@ -239,10 +251,10 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 }
             }, function () {
                 // Update status to let user know options were saved.
-                console.log("updated localStorage");
+                clog("updated localStorage");
             });
         } catch (err) {
-            console.log("chrome.storage.sync.set error", err);
+            clog("chrome.storage.sync.set error", err);
         }
     }
     var rafter = "";
@@ -253,38 +265,38 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
     if (unit == "gild") {
         c = `u/tippr gild ${rafter}`;
     }
-    console.log("comment", c);
+    clog("comment", c);
     for (i = 0; i < document.getElementsByClassName("bylink").length; i += 0) {
         if (!(document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") && document.getElementsByClassName("bylink")[i].getAttribute("data-href-url") == postLink)) {
-            console.log("Tried i:", i);
+            clog("Tried i:", i);
             i++;
             continue;
         } else {
-            console.log("Found i: ", i);
+            clog("Found i: ", i);
         }
         var bl = document.getElementsByClassName("bylink")[i];
-        console.log("bl 1", i, bl, bl.parentElement, bl.parentElement.parentElement);
-        xt =  bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0];
+        clog("bl 1", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        xt = bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0];
 
         bl.parentElement.parentElement.getElementsByClassName("reply-button")[0].children[0].click(); // CLICK REPLY BTN
 
-        console.log("bl 2", i, document.getElementsByClassName("bylink")[i], document.getElementsByClassName("bylink")[i].parentElement, document.getElementsByClassName("bylink")[i].parentElement.parentElement);
-        console.log("bl 3", i, bl, bl.parentElement, bl.parentElement.parentElement);
-        console.log("i xt", i, xt);
+        clog("bl 2", i, document.getElementsByClassName("bylink")[i], document.getElementsByClassName("bylink")[i].parentElement, document.getElementsByClassName("bylink")[i].parentElement.parentElement);
+        clog("bl 3", i, bl, bl.parentElement, bl.parentElement.parentElement);
+        clog("i xt", i, xt);
         // throw "";
-        // console.log("229:bylink", document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
+        // clog("229:bylink", document.getElementsByClassName("bylink")[i].parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0]);
         var yt = false, tipReady = false;
         try {
-            console.log("trying regular case with BL");
+            clog("trying regular case with BL");
             bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("md")[1].children[0].value = c;
             bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
             tipReady = true;
         } catch (e1) {
-            console.log("e1", e1);
+            clog("e1", e1);
             try {
-                console.log("trying second case with YT");
+                clog("trying second case with YT");
                 yt = xt.parentElement.parentElement.parentElement.parentElement.querySelector(".usertext.cloneable")
-                console.log("yt", yt);
+                clog("yt", yt);
                 if (!yt) {
                     throw "YT Nonexistent";
                 }
@@ -292,10 +304,10 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
                 yt.getElementsByClassName("save")[0].innerHTML = "confirm your tip!";
                 tipReady = true;
             } catch (e2) {
-                console.log("e2", e2);
+                clog("e2", e2);
             }
         }
-        console.log("after climax"); ++i;
+        clog("after climax"); ++i;
         chrome.storage.sync.set({
             tipInProgress: false,
             tipData: {
@@ -303,15 +315,17 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             }
         }, function () {
             // Update status to let user know options were saved.
-            console.log("cleared local storage");
+            clog("cleared local storage");
         });
         if (rt_autosend && tipReady) {
+            clog("Starting automatic tipping procedure...");
             if (yt !== false) {
                 yt.getElementsByClassName("save")[0].click();
             } else {
                 bl.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("save")[0].click();
             }
         } else if (rt_withconf && notCancelledYet && notAcceptedYet) {
+            clog("Pinging for confirmation of tip...");
             if (notCancelledYet && notAcceptedYet && window.confirm(`Would you like to confirm your tip? The text version is listed below:\n----------\n${c}\n----------\n`)) {
                 notAcceptedYet = false;
                 if (yt !== false) {
@@ -322,7 +336,7 @@ function launchTip(amount, unit = "bch", postLink, postAuthor = "", isComment = 
             } else {
                 // window.history.back();
                 notCancelledYet = false;
-                setTimeout(function(){
+                setTimeout(function () {
                     notCancelledYet = true;
                 }, 500);
             }
@@ -338,7 +352,7 @@ function redditTipCore() {
     if (buttonsList.length < 1) {
         window.setTimeout(rActivate, 200);
     }
-    console.log(rt_log + "activating...");
+    clog(rt_log + "activating...");
     coreRuntime += 1;
 
 
@@ -363,22 +377,26 @@ function redditTipCore() {
     rt_modal_main.appendChild(rt_btn);
     modal.getElementsByClassName("rt-modal-body")[0].appendChild(rt_modal_main);
     rt_btn.children[0].onclick = function () {
-        console.log(this)
+        clog(this)
         if (modal.getAttribute("rt-post-link") != "" && modal.getAttribute("rt-post-author") != "") {
+            var messageValue = this.parentElement.parentElement.getElementsByClassName("rte-message-class")[0].value || "";
+            while (messageValue.charAt(0) === ' ') {
+                messageValue = messageValue.substr(1);
+            }
             launchTip(
                 this.parentElement.parentElement.getElementsByClassName("rte-amount-class")[0].value,
                 this.parentElement.parentElement.getElementsByClassName("rte-unit-class")[0].value,
                 modal.getAttribute("rt-post-link"),
                 modal.getAttribute("rt-post-author"),
                 (modal.getAttribute("rt-is-comment") == "true"),
-                this.parentElement.parentElement.getElementsByClassName("rte-message-class")[0].value || ""
+                messageValue
             )
         } else {
             rtError("We couldn't trace the post link or author.");
-            console.log(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
+            clog(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
         }
     }
-    rt_btn.children[1].onclick = function() {
+    rt_btn.children[1].onclick = function () {
         var confirmation = window.confirm(`Giving Gold to (or "gilding") a post/comment gives the author one month of Reddit Gold. It costs $2.50 USD worth of Bitcoin Cash to gild. \n\n Press "OK" to accept the terms and gild this post with $2.50 USD of Bitcoin Cash. \n Press "CANCEL" to cancel the gilding.`);
         if (!confirmation) {
             return 0;
@@ -395,12 +413,12 @@ function redditTipCore() {
             )
         } else {
             rtError("We couldn't trace the post link or author.");
-            console.log(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
+            clog(modal.getAttribute("rt-post-link"), modal.getAttributeNode("rt-post-author"))
         }
     }
     if (gilding == false) {
         rt_btn.children[1].style.display = "none";
-        rt_btn.children[1].onclick = function() {
+        rt_btn.children[1].onclick = function () {
             alert('Giving Reddit Gold ("gilding") has been disabled in your settings. \n\n Click "OK", then click the Settings button if you want to change this.');
         }
     }
@@ -418,7 +436,7 @@ function redditTipCore() {
     if (window.location.href.indexOf("/comments/") <= -1) {
         rt_truelink = false;
     }
-    // console.log(modal.children, modal.children[0].getElementsByClassName("rt-main"));
+    // clog(modal.children, modal.children[0].getElementsByClassName("rt-main"));
     if ($("body") && $("body").length) {
         $("body")[0].appendChild(modal);
     } else {
@@ -428,7 +446,7 @@ function redditTipCore() {
             //rtError(error);
         }
     }
-    console.log(rt_log + "attaching...")
+    clog(rt_log + "attaching...")
 
 
     for (i = 0; i < document.getElementsByClassName("rt-modal-class").length; ++i) {
@@ -451,25 +469,25 @@ function redditTipCore() {
                     modal_i: i
                 });
                 this.innerHTML =
-                    `Settings...`; 
+                    `Settings...`;
                 if (chrome.runtime.openOptionsPage) {
                     chrome.runtime.openOptionsPage();
                     this.innerHTML = `<b>Settings</b>`;
-                  } else {
-                    chrome.runtime.sendMessage({action: "options"}, function(response) {
-                      
+                } else {
+                    chrome.runtime.sendMessage({ action: "options" }, function (response) {
+
                     });
-                  }
+                }
             }
-            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onblur = function() {
+            document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].onblur = function () {
                 this.innerHTML = `<b>Settings</b>`;
             }
-            
-            window.onblur = function() {
+
+            window.onblur = function () {
                 try {
                     chrome.storage.sync.get({
                         modal_i: 0,
-                    }, function(items) {
+                    }, function (items) {
                         i = items.modal_i;
                         document.getElementsByClassName("rt-modal-class")[i].getElementsByClassName("btn-options")[0].innerHTML = `<b>Settings</b>`;
                     })
@@ -478,7 +496,7 @@ function redditTipCore() {
                 }
             }
         } catch (err) {
-            console.log("Caught error", err);
+            clog("Caught error", err);
         }
         var savedPrice = 0.0;
         const fxn = function () {
@@ -489,7 +507,7 @@ function redditTipCore() {
                     savedPrice = data.USD;
                 } else if (savedPrice != 0.0) {
                     price = savedPrice;
-                } 
+                }
                 var x = document.getElementsByClassName("rt-usdv");
                 for (i = 0; i < x.length; ++i) {
                     var amt = (1.0 * x[i].parentElement.getElementsByClassName("rte-amount-class")[0].value) || 0;
@@ -544,7 +562,7 @@ function redditTipCore() {
                     x[i].style.display = "none";
                 }
             } catch (e) {
-                
+
             }
         }
         try {
@@ -555,7 +573,7 @@ function redditTipCore() {
                 }
             }
         } catch (e) {
-            
+
         }
     }
     for (i = 0; i < buttonsList.length; i++) {
@@ -593,7 +611,7 @@ function redditTipCore() {
             var isComment = this.getAttribute("data-isComment");
             var postLink = this.getAttribute("data-link");
             var author = this.getAttribute("data-author");
-            console.log("Setting post link to", postLink, " post author to", author, "is comment to", isComment, "for");
+            clog("Setting post link to", postLink, " post author to", author, "is comment to", isComment, "for");
             modal.setAttribute("rt-post-link", `${postLink}`);
             modal.setAttribute("rt-post-author", `${author}`);
             modal.setAttribute("rt-is-comment", isComment);
@@ -607,29 +625,29 @@ function redditTipCore() {
 
 function rActivate(force = false) {
     if (!window.jQuery) {
-        console.log(rt_log + "waiting for full script load...")
+        clog(rt_log + "waiting for full script load...")
         window.setTimeout(rActivate, 200);
     } else {
         if (document.readyState === "complete" || force) {
-            console.log(rt_log + "beginning launch...")
+            clog(rt_log + "beginning launch...")
             try {
                 checkForTips();
                 redditTipCore();
                 $(window).bind('hashchange', function () { checkForTips(); rActivate(true); });
             } catch (err) {
-                console.log(rt_log, " caught error: ", err);
+                clog(rt_log, " caught error: ", err);
                 setTimeout(function () {
                     rActivate(true);
                 }, 250);
             }
         } else {
-            // console.log(rt_log + "waiting for full reddit load...")
+            // clog(rt_log + "waiting for full reddit load...")
             window.setTimeout(rActivate, 200);
         }
     }
 }
 
-console.log(rt_log + "waiting for full page load...");
+clog(rt_log + "waiting for full page load...");
 rActivate(false);
 
 setTimeout(function () {

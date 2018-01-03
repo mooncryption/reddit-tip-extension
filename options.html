@@ -14,10 +14,14 @@
     .footr {
       font-size: 10px;
     }
+    .wAddress {
+      width: 50%;
+    }
   </style>
 </head>
 
 <body>
+  <h2>General</h2>
   Tipping Mode:
   <select id="autotip">
     <option value="true">Automatic (Submit Instantly)</option>
@@ -33,7 +37,18 @@
     <option value="use tippr">"use tippr"</option>
     <option value="give bch">"give bch"</option>
   </select>
-  <br/><br/> Default Unit:
+  <br/><br/> Toolbar Button Action:
+  <select id="browserActionLink">
+      <option value="https://reddit.com/r/btc/">Go to /r/btc on Reddit</option>
+      <option value="https://reddit.com/r/bitcoincash/">Go to /r/bitcoincash on Reddit</option>
+      <option value="https://reddit.com">Go to Reddit.com</option>
+      <option value="#settings">Go to this extension's Settings (here)</option>
+      <option value="https://mooncryption.github.io/reddit-tip-extension/#usage?browserActionLink">Go to this extension's Documentation</option>
+      <option value="https://www.reddit.com/message/compose/?rcompose=true">Submit Feedback (or File Bug Report)</option>
+  </select>
+  <hr>
+  <h2>Tipping</h2>
+  Default Unit:
   <select id="unit">
       <option value="bch">BCH</option>
       <option value="usd">USD</option>
@@ -45,11 +60,16 @@
   <input type="number" step="0.00000001" id="step" name="step"/>
   <br/><br/>
   <input type="checkbox" id="gild" name="gild"/> Enable Gilding (Giving Gold)
+  <br/>
+  <hr>
+  <h2>Withdrawal Options</h2>
+  <b>Note:</b> These are only defaults/presets, and you will be asked to confirm the amount/address yourself every time you want to make a withdrawal.
+  <br/><br/> Withdrawal Amount:
+  <input type="number" step="0.0001" id="wAmount" name="wAmount"/>&nbsp; BCH
+  <br/><br/> Withdrawal BCH Address:
+  <input type="text" id="wAddress" maxlength="60" size="60" name="wAddress"/>
   <br/><br/>
-  <!-- <label>
-    <input type="checkbox" id="like">
-    I like colors.
-  </label> -->
+  <hr>
 
   <div id="status"></div><br/>
   <button id="save">Save Settings</button>

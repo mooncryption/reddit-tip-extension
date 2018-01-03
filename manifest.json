@@ -1,22 +1,20 @@
 {
     "manifest_version": 2,
     "name": "Reddit Tip Extension",
-    "short_name": "Reddit Tippr",
+    "short_name": "Reddit Tip",
     "version": "0.0.1",
     "icons": {
         "48": "./images/logo-48.png",
         "128": "./images/logo-128.png",
         "256": "./images/logo-256.png"
     },
-    "author": "@mooncryption",
+    "author": "mooncryption",
     "homepage_url": "https://github.com/mooncryption/reddit-tip-extension",
     "description": "Tip and donate Bitcoin Cash to any Reddit user instantly!",
     "minimum_chrome_version": "50",
     "permissions": [
-        "https://*.reddit.com/*",
-        "http://*.reddit.com/*",
-        "https://*.mooncryption.github.io/*",
-        "http://*.mooncryption.github.io/*",
+        "*://*.reddit.com/*",
+        "*://*.mooncryption.github.io/*",
         "storage"
     ],
     "background" : {
@@ -41,32 +39,48 @@
                 "main.js"
             ],
             "matches": [
-                "https://reddit.com/*",
-                "http://reddit.com/*",
-                "https://*.reddit.com/*",
-                "http://*.reddit.com/*"
+                "*://reddit.com/*",
+                "*://*.reddit.com/*"
             ],
             "exclude_matches": [
-                "https://mod.reddit.com/*",
-                "https://ads.reddit.com/*",
-                "https://i.reddit.com/*",
-                "https://m.reddit.com/*",
-                "https://static.reddit.com/*",
-                "https://thumbs.reddit.com/*",
-                "https://blog.reddit.com/*",
-                "https://code.reddit.com/*",
-                "https://about.reddit.com/*",
-                "https://*.reddit.com/*.compact",
-                "https://*.reddit.com/*.compact?*",
-                "https://*.reddit.com/*.mobile",
-                "https://*.reddit.com/*.mobile?*",
-                "https://*.reddit.com/*.json",
-                "https://*.reddit.com/*.json?*",
-                "https://*.reddit.com/*.json-html",
-                "https://*.reddit.com/*.json-html?*",
-                "https://*.reddit.com/message/*"
+                "*://mod.reddit.com/*",
+                "*://ads.reddit.com/*",
+                "*://i.reddit.com/*",
+                "*://m.reddit.com/*",
+                "*://static.reddit.com/*",
+                "*://thumbs.reddit.com/*",
+                "*://blog.reddit.com/*",
+                "*://code.reddit.com/*",
+                "*://about.reddit.com/*",
+                "*://*.reddit.com/*.compact",
+                "*://*.reddit.com/*.compact?*",
+                "*://*.reddit.com/*.mobile",
+                "*://*.reddit.com/*.mobile?*",
+                "*://*.reddit.com/*.json",
+                "*://*.reddit.com/*.json?*",
+                "*://*.reddit.com/*.json-html",
+                "*://*.reddit.com/*.json-html?*",
+                "*://*.reddit.com/message/*",
+                "*://*.reddit.com/tip",
+                "*://reddit.com/tip",
+                "http://*.reddit.com/tip",
+                "http://reddit.com/tip"
             ],
             "run_at": "document_start"
+        },
+        { 
+            "css": [
+                "styles.css"
+            ],
+            "js": [
+                "jquery.min.js",
+                "dashboard.js"
+            ],
+            "matches": [
+                "*://*.reddit.com/tip",
+                "*://reddit.com/tip",
+                "*://reddit.com/tip*"
+            ]
         },
         {
             "css": [
@@ -77,16 +91,13 @@
                 "composer.js"
             ],
             "matches": [
-                "https://*.reddit.com/message/compose/*",
-                "https://reddit.com/message/compose/*",
-                "https://reddit.com/message/compose",
-                "http://reddit.com/message/compose",
-                "https://reddit.com/message/inbox/*",
-                "https://*.reddit.com/message/inbox/*",
-                "http://*.reddit.com/message/inbox/*",
-                "http://reddit.com/message/inbox/*",
-                "https://*.reddit.com/message/inbox",
-                "https://reddit.com/message/inbox"
+                "*://*.reddit.com/message/compose/*",
+                "*://reddit.com/message/compose/*",
+                "*://reddit.com/message/compose",
+                "*://reddit.com/message/inbox/*",
+                "*://*.reddit.com/message/inbox/*",
+                "*://*.reddit.com/message/inbox",
+                "*://reddit.com/message/inbox"
             ]
         },
         {
@@ -98,10 +109,11 @@
                 "devsite.js"
             ],
             "matches": [
-                "https://mooncryption.github.io/reddit-tip-extension",
-                "http://mooncryption.github.io/reddit-tip-extension",
-                "https://mooncryption.github.io/*",
-                "http://mooncryption.github.io/*"
+                "*://mooncryption.github.io/reddit-tip-extension",
+                "*://mooncryption.github.io/reddit-tip-extension/*",
+                "*://mooncryption.github.io/reddit-tip-extension?*",
+                "*://mooncryption.github.io/reddit-tip-extension#*",
+                "*://mooncryption.github.io/*"
             ]
         }
     ]
